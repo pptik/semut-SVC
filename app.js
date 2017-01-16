@@ -4,13 +4,23 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var database = require('./setup/database');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
 
-var db = require('./models/users');
+// connect to db
+
+database.connect(function (err, db) {
+   if(err){
+        console.log(err);
+   } else {
+       db.close();
+   }
+});
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
