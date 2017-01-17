@@ -5,8 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('semut-svc:server');
-var http = require('http');
+
 
 /**
  * Get port from environment and store in Express.
