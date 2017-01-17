@@ -21,6 +21,17 @@ exports.register = function (query, callback) {
                }
            }
         });
+    });
+};
 
+exports.getalltracker = function (query, callback) {
+    db.collection('tb_tracker', function (err, collection) {
+        collection.find({}).toArray(function (err, items) {
+            if(err){
+                callback(err, null);
+            }else {
+                callback(null, items);
+            }
+        });
     });
 };

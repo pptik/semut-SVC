@@ -8,12 +8,13 @@ router.post('/register', function(req, res, next) {
         res.status(200).send({success: false, message: "Parameter tidak lengkap"});
     }else {
         var request = {
-          Mac: req.body['Mac'],
+            Mac: req.body['Mac'],
             Speed : 0,
-            date : "",
-            time : "",
-            data: [0,0],
-            keterangan: req.body['Keterangan']
+            Date : "",
+            Time : "",
+            Data: [0,0],
+            Lokasi: "",
+            Keterangan: req.body['Keterangan']
         };
         trackerModel.register(request, function (err, result) {
             if(err){
@@ -25,6 +26,20 @@ router.post('/register', function(req, res, next) {
         })
     }
 
+});
+
+router.post('/getalltracker', function (req, res, next) {
+   if(req.body['sessionID'] == null){
+       res.status(200).send({success:false, message:"Parameter tidak lengkap"});
+   }else {
+        trackerModel.getalltracker(req.body, function (err, results) {
+           if(err){
+               res.status(200).send({status: false, message:"Server tidak merespon"});
+           } else {
+               res.status(200).send({status: true, message:"Sukses memuat permintaan", trackers: results});
+           }
+        });
+   }
 });
 
 module.exports = router;
