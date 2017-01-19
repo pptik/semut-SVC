@@ -153,3 +153,87 @@ exports.regsiter = function (query, callback) {
         callback("server error", null);
     }
 };
+
+
+
+exports.getProfile = function (call, callback) {
+    var sessionId = call.SessionID;
+    checkSession(sessionId, function (err, result) {
+        if(err){
+            console.log(err);
+            callback(err, null);
+        }else {
+            if(result.id){
+                getProfileById(result.id, function (err, result) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        var res = {
+                            success: true,
+                            message: "Sukses memuat permintaan",
+                            Profile: result
+                        };
+                        callback(null, res);
+                    }
+                });
+            }else {
+                callback(null, result);
+            }
+        }
+    });
+}
+
+
+//----------------------------------- function ---------------------------------------------//
+
+function checkSession(sessid, callback) {
+    var sessionColl = db.collection('tb_session');
+    sessionColl.find({ID: sessid}).toArray(function (err, results) {
+        if (err) {
+            console.log(err);
+            callback(err, null);
+        } else {
+            console.log(results);
+            if(results[0]) {
+                callback(null, {id: results[0].UserID});
+            }else {
+                callback(null, {success:false, message:"Sesi Anda telah habis, silahkan login terlebih dahulu"});
+            }
+        }
+    });
+}
+
+
+function getProfileById(iduser, callback) {
+    var userColl = db.collection('tb_user');
+    userColl.find({ID: iduser}).toArray(function (err, results) {
+        if (err) {
+            console.log(err);
+            callback(err, null);
+        } else {
+            console.log(results[0]);
+            if(results[0]) {
+                var data = results[0];
+                delete data['Password'];
+                delete data['_id'];
+                delete data['flag'];
+                delete data['foto'];
+                delete data['PushID'];
+                delete data['Path_foto'];
+                delete data['Nama_foto'];
+                delete data['Path_ktp'];
+                delete data['Nama_ktp'];
+                delete data['facebookID'];
+                delete data['ID_role'];
+                delete data['ID_ktp'];
+                delete data['Plat_motor'];
+                delete data['VerifiedNumber'];
+                delete data['Barcode'];
+                delete data['Status_online'];
+                callback(null, data);
+            }else {
+                callback(null, {success:false, message: "User tidak ditemukan"});
+            }
+        }
+    });
+}

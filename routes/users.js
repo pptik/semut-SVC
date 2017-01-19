@@ -41,4 +41,21 @@ router.post('/signup', function(req, res, next) {
   }
 });
 
+
+router.post('/getprofile', function(req, res, next) {
+  var sessid = req.body.SessionID;
+  if(sessid == null) {
+    res.status(200).send({success: false, message: "parameter tidak lengkap"});
+  }else {
+    userModel.getProfile(req.body, function (err, result) {
+      if(err){
+        res.status(200).send({success: false, message: "Server bermasalah"});
+      }else {
+        res.status(200).send(result);
+      }
+    });
+  }
+});
+
+
 module.exports = router;
