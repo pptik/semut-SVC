@@ -228,6 +228,30 @@ exports.getProfileById = function (call, callback) {
 };
 
 
+exports.search = function (call, callback) {
+    var sessionId = call.SessionID;
+    var key = call.Keyword;
+    checkSession(sessionId, function (err, result) {
+        if(err){
+            console.log(err);
+            callback(err, null);
+        }else {
+            if(result.id){
+                searchUser(key, result.id, function (err, results) {
+                   if(err){
+                       callback(err, null);
+                   } else {
+                       callback(null, results);
+                   }
+                });
+            }else {
+                callback(null, result);
+            }
+        }
+    })
+};
+
+
 //----------------------------------- function ---------------------------------------------//
 
 function checkSession(sessid, callback) {
@@ -237,7 +261,7 @@ function checkSession(sessid, callback) {
             console.log(err);
             callback(err, null);
         } else {
-            console.log(results);
+          //  console.log(results);
             if(results[0]) {
                 callback(null, {id: results[0].UserID});
             }else {
@@ -304,5 +328,73 @@ function getRelationStatus(id1, id2, callback) {
                 callback(null, false);
             }
         }
+    });
+}
+
+
+function searchUser(key, userid, callback) {
+    var userColl = db.collection('tb_user');
+    userColl.find({$or: [{Name:{'$regex': '.*'+key+'.*'}}, { Email:{'$regex': '.*'+key+'.*'}}]}).toArray(function (err, items) {
+       if(err){
+           callback(err, null);
+       } else {
+         //  console.log(items.length);
+           if(items.length > 0) {
+               iterateUser(items, userid, function (err, results) {
+                   if (err) {
+                       callback(err, null);
+                   } else {
+                       callback(null, {success: true, message: "Ditemukan "+results.length+" hasil pencarian untuk kata pencarian "+"'"+key+"'", size:results.length,  profiles :results});
+                   }
+               });
+           }else {
+               callback(null, {success: false, message: "Tidak ditemukan hasil untuk kata pencarian "+"'"+key+"'"});
+           }
+       }
+    });
+}
+
+function iterateUser(items, userid, callback) {
+    for(var i = 0; i< items.length; i++){
+        items[i].index = i;
+    }
+    var arrResult = [];
+    items.forEach(function(index){
+        getRelationStatus(userid, index['ID'], function (err, result) {
+            if(err){
+                callback(err, null);
+            }else {
+                if(result == false){
+                    index['Friend'] = false;
+                }else {
+                    index['Friend'] = true;
+                    index['RelationInfo'] = result;
+                }
+            }
+            arrResult.push(index);
+            if(index['index'] == items.length-1){
+                for(var i = 0; i< arrResult.length; i++){
+                    delete arrResult[i]['index'];
+                    delete arrResult[i]['Password'];
+                    delete arrResult[i]['_id'];
+                    delete arrResult[i]['flag'];
+                    delete arrResult[i]['foto'];
+                    delete arrResult[i]['PushID'];
+                    delete arrResult[i]['Path_foto'];
+                    delete arrResult[i]['Nama_foto'];
+                    delete arrResult[i]['Path_ktp'];
+                    delete arrResult[i]['Nama_ktp'];
+                    delete arrResult[i]['facebookID'];
+                    delete arrResult[i]['ID_role'];
+                    delete arrResult[i]['ID_ktp'];
+                    delete arrResult[i]['Plat_motor'];
+                    delete arrResult[i]['VerifiedNumber'];
+                    delete arrResult[i]['Barcode'];
+                    delete arrResult[i]['Status_online'];
+                }
+                callback(null, arrResult);
+            }
+        });
+
     });
 }
