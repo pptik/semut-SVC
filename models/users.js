@@ -181,7 +181,51 @@ exports.getProfile = function (call, callback) {
             }
         }
     });
-}
+};
+
+
+
+exports.getProfileById = function (call, callback) {
+    var sessionId = call.SessionID;
+    var userId = parseInt(call['UserID']);
+    checkSession(sessionId, function (err, result) {
+        if(err){
+            console.log(err);
+            callback(err, null);
+        }else {
+            if(result.id){
+                getProfileById(userId, function (err, pResult) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        var res = {
+                            success: true,
+                            message: "Sukses memuat permintaan",
+                            Profile: pResult
+                        };
+                        getRelationStatus(result.id, userId, function (err, rResult) {
+                            if (err) {
+                                console.log(err);
+                                callback(err, null);
+                            } else {
+                                if(rResult == false){
+                                    res.Friend = false;
+                                    callback(null, {response: res});
+                                }else {
+                                    res.Friend = true;
+                                    res.RelationInfo = rResult;
+                                    callback(null, res);
+                                }
+                            }
+                        });
+                    }
+                });
+            }else {
+                callback(null, result);
+            }
+        }
+    })
+};
 
 
 //----------------------------------- function ---------------------------------------------//
@@ -233,6 +277,31 @@ function getProfileById(iduser, callback) {
                 callback(null, data);
             }else {
                 callback(null, {success:false, message: "User tidak ditemukan"});
+            }
+        }
+    });
+}
+
+
+
+function getRelationStatus(id1, id2, callback) {
+    var relationColl = db.collection('tb_relation');
+    relationColl.find({ $or: [ { ID_REQUEST: id1, ID_RESPONSE: id2 }, { ID_REQUEST: id2, ID_RESPONSE: id1 } ] } ).toArray(function (err, results) {
+        if (err) {
+            console.log(err);
+            callback(err, null);
+        } else {
+            if(results[0]) {
+                var friend = {};
+                friend['RelationID'] = results[0].ID;
+                friend['IsRequest'] = false;
+                if(results[0].ID_REQUEST == id2){
+                    friend['IsRequest'] = true;
+                }
+                if(results[0].State == 1) friend['Status'] = "Pending"; else friend['Status'] = "Confirmed";
+                callback(null, friend);
+            }else {
+                callback(null, false);
             }
         }
     });

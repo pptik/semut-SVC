@@ -58,4 +58,21 @@ router.post('/getprofile', function(req, res, next) {
 });
 
 
+router.post('/getprofilebyid', function(req, res, next) {
+  var sessid = req.body.SessionID;
+  var userid = req.body.UserID;
+  if(sessid == null || userid == null) {
+    res.status(200).send({success: false, message: "parameter tidak lengkap"});
+  }else {
+    userModel.getProfileById(req.body, function (err, result) {
+      if(err){
+        res.status(200).send({success: false, message: "Server bermasalah"});
+      }else {
+        res.status(200).send(result);
+      }
+    });
+  }
+});
+
+
 module.exports = router;
