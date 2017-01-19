@@ -28,6 +28,7 @@ exports.request = function(call, callback){
                                        ID_REQUEST: result.id,
                                        ID_RESPONSE: parseInt(call.UserID),
                                        RequestTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                       ResponseTime: "",
                                        State: 1,
                                        reg_flag: 0,
                                        res_flag:0
@@ -71,6 +72,58 @@ exports.request = function(call, callback){
 };
 
 
+exports.accept = function (call, callback) {
+    checkSession(call.SessionID, function (err, result) {
+        if(err){
+            callback(err, null);
+        }else {
+            if(result.id){
+                var relColl = db.collection('tb_relation');
+                relColl.find({ID: parseInt(call.RelationID), State:1}).toArray(function (err, results) {
+                   if(err){
+                       callback(err, null);
+                   } else {
+                       if(results[0]){
+                           console.log(parseInt(call.RelationID));
+                           relColl.update({ID:parseInt(call.RelationID)}, { $set: { State:2, ResponseTime : moment().format('YYYY-MM-DD HH:mm:ss')}}, function (err, result) {
+                               if(err){
+                                   callback(err, null);
+                               }else {
+                                   console.log("damnnn", JSON.stringify(result));
+                                    getProfileById(results[0].ID_RESPONSE, function (err, profile_1) {
+                                        if(err){
+                                            callback(err, null);
+                                        }else {
+                                            getProfileById(results[0].ID_REQUEST, function (err, profile_2) {
+                                                if (err) {
+                                                    callback(err, null);
+                                                }else {
+                                                    getRelationStatus(profile_1.ID, profile_2.ID, function (err, res) {
+                                                        if(err){
+                                                            callback(err, null);
+                                                        }else {
+                                                            callback(null, {success:true, Profile: profile_2, Relation:res});
+                                                        }
+                                                    })
+                                                }
+                                            });
+                                        }
+                                    });
+                               }
+                           });
+                       }else {
+                           callback(null, {success:false, message: "Relation ID tidak sesuai"})
+                       }
+                   }
+                });
+            }else {
+                callback(null, result);
+            }
+        }
+    });
+};
+
+
 
 //----------------------------------- function ---------------------------------------------//
 
@@ -93,6 +146,7 @@ function checkSession(sessid, callback) {
 
 
 function getProfileById(iduser, callback) {
+    console.log("shit", iduser);
     var userColl = db.collection('tb_user');
     userColl.find({ID: iduser}).toArray(function (err, results) {
         if (err) {

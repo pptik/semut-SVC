@@ -19,4 +19,21 @@ router.post('/request', function(req, res, next) {
 });
 
 
+router.post('/approve', function(req, res, next) {
+    console.log(req.body);
+    if(req.body['SessionID'] == null || req.body['RelationID'] == null) {
+        res.status(200).send({success: false, message: "parameter tidak lengkap"});
+    }else {
+        // res.status(200).send()
+        friendModel.accept(req.body, function (err, result) {
+            if(err){
+                res.status(200).send({success: false, message: "Server bermasalah"});
+            }else {
+                res.status(200).send(result);
+            }
+        });
+    }
+});
+
+
 module.exports = router;
