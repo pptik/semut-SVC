@@ -85,6 +85,7 @@ exports.accept = function (call, callback) {
                    } else {
                        if(results[0]){
                            console.log(parseInt(call.RelationID));
+                           var relColl = db.collection('tb_relation');
                            relColl.update({ID:parseInt(call.RelationID)}, { $set: { State:2, ResponseTime : moment().format('YYYY-MM-DD HH:mm:ss')}}, function (err, result) {
                                if(err){
                                    callback(err, null);
