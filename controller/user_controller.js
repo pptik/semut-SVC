@@ -40,3 +40,23 @@ exports.login = function (call, callback) {
        }
     });
 };
+
+exports.signup = function (call, callback) {
+  userModel.findEmail(call['Email'], function (err, emails) {
+     if(err){
+         callback(err, null);
+     } else {
+         if(emails[0]){
+             callback(null, {success:false, message: "Email sudah terdaftar"});
+         }else {
+             userModel.insertUser(call, function (err, user) {
+                if(err){
+                    callback(err, null);
+                } else {
+                    callback(null, {success:true, message: "Berhasil membuat akun"});
+                }
+             });
+         }
+     }
+  });
+};

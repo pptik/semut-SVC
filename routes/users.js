@@ -30,7 +30,7 @@ router.post('/signup', function(req, res, next) {
   if(email == null || phonenumber == null || gender == null || birthday == null || password == null || name == null) {
     res.status(200).send({success: false, message: "parameter tidak lengkap"});
   }else {
-    userModel.regsiter(req.body, function (err, result) {
+    userController.signup(req.body, function (err, result) {
       if(err){
         res.status(200).send({success: false, message: "Server bermasalah"});
       }else {

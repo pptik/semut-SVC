@@ -55,8 +55,7 @@ exports.getSession = function (userID, callback) {
 
 
 exports.getProfileById = function(iduser, callback) {
-    var userColl = db.collection('tb_user');
-    userColl.find({ID: iduser}).toArray(function (err, results) {
+    userCollection.find({ID: iduser}).toArray(function (err, results) {
         if (err) {
             callback(err, null);
         } else {
@@ -82,6 +81,61 @@ exports.getProfileById = function(iduser, callback) {
             }else {
                 callback(null, results);
             }
+        }
+    });
+};
+
+exports.insertUser = function (query, callback) {
+    var email = query.Email;
+    var phonenumber = query.Phonenumber;
+    var gender = query.Gender;
+    var birthday = query.Birthday;
+    var password = query.Password;
+    var name = query.Name;
+    autoIncrement.getNextSequence(db, 'tb_user', function (err, autoIndex){
+        if(err){
+            callback(err, null);
+        }else {
+            var userQuery = {
+                "ID" : autoIndex,
+                "Name" : name,
+                "Email" : email,
+                "CountryCode" : 62,
+                "PhoneNumber" : phonenumber,
+                "Gender" : gender,
+                "Birthday" : birthday,
+                "Password" : md5(password),
+                "Joindate" : moment().format('YYYY-MM-DD HH:mm:ss'),
+                "Poin" : 100,
+                "PoinLevel" : 100,
+                "AvatarID" : gender,
+                "facebookID" : null,
+                "Verified" : 0,
+                "VerifiedNumber" : null,
+                "Visibility" : 0,
+                "Reputation" : 0,
+                "flag" : 1,
+                "Barcode" : "",
+                "deposit" : 0,
+                "ID_role" : null,
+                "Plat_motor" : null,
+                "ID_ktp" : null,
+                "foto" : null,
+                "PushID" : "no id",
+                "Status_online" : null,
+                "Path_foto" : null,
+                "Nama_foto" : null,
+                "Path_ktp" : null,
+                "Nama_ktp" : null
+            };
+            userCollection.insertOne(userQuery, function (err, result) {
+                if(err){
+                    console.log(err);
+                    callback(err, null);
+                }else {
+                    callback(null, result);
+                }
+            });
         }
     });
 };
