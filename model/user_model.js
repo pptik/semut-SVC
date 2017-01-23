@@ -6,6 +6,7 @@ db = app.db;
 
 var userCollection = db.collection('tb_user');
 var sessionCollection = db.collection('tb_session');
+var relationCollection = db.collection('tb_relation');
 
 exports.findEmail = function (email, callback) {
   userCollection.find({Email :email}).toArray(function (err, results) {
@@ -70,7 +71,8 @@ exports.checkSession = function(sessid, callback) {
 
 
 exports.getProfileById = function(iduser, callback) {
-    userCollection.find({ID: iduser}).toArray(function (err, results) {
+    var _id = parseInt(iduser);
+    userCollection.find({ID: _id}).toArray(function (err, results) {
         if (err) {
             callback(err, null);
         } else {
@@ -94,7 +96,7 @@ exports.getProfileById = function(iduser, callback) {
                 delete data['Status_online'];
                 callback(null, data);
             }else {
-                callback(null, results);
+                callback(null, null);
             }
         }
     });
@@ -107,7 +109,7 @@ exports.insertUser = function (query, callback) {
     var birthday = query.Birthday;
     var password = query.Password;
     var name = query.Name;
-    autoIncrement.getNextSequence(db, 'tb_user', function (err, autoIndex){
+    autoIncrement.getNextSequence(db, 'tb_user', 'ID', function (err, autoIndex){
         if(err){
             callback(err, null);
         }else {
@@ -153,4 +155,116 @@ exports.insertUser = function (query, callback) {
             });
         }
     });
+};
+
+
+exports.getRelationStatus = function(id1, id2, callback) {
+    relationCollection.find({ $or: [ { ID_REQUEST: parseInt(id1), ID_RESPONSE: parseInt(id2) }, { ID_REQUEST: parseInt(id2), ID_RESPONSE: parseInt(id1) } ] } ).toArray(function (err, results) {
+        if (err) {
+            console.log(err);
+            callback(err, null);
+        } else {
+            if(results[0]) {
+                var friend = {};
+                friend['RelationID'] = results[0].ID;
+                friend['IsRequest'] = false;
+                if(results[0].ID_REQUEST == id2){
+                    friend['IsRequest'] = true;
+                }
+                if(results[0].State == 1) friend['Status'] = "Pending"; else friend['Status'] = "Confirmed";
+                callback(null, friend);
+            }else {
+                callback(null, false);
+            }
+        }
+    });
+};
+
+
+exports.searchUser = function(key, userID, callback) {
+    userCollection.find({$or: [{Name:{'$regex': '.*'+key+'.*'}}, { Email:{'$regex': '.*'+key+'.*'}}]}).toArray(function (err, items) {
+        if(err){
+            callback(err, null);
+        } else {
+            if(items.length > 0) {
+                iterateUser(items, userID, function (err, results) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        callback(null, results);
+                    }
+                });
+            }else {
+                callback(null, null);
+            }
+        }
+    });
+
+
+    function getRelationStatus(id1, id2, callback) {
+        relationCollection.find({ $or: [ { ID_REQUEST: id1, ID_RESPONSE: id2 }, { ID_REQUEST: id2, ID_RESPONSE: id1 } ] } ).toArray(function (err, results) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                if(results[0]) {
+                    var friend = {};
+                    friend['RelationID'] = results[0].ID;
+                    friend['IsRequest'] = false;
+                    if(results[0].ID_REQUEST == id2){
+                        friend['IsRequest'] = true;
+                    }
+                    if(results[0].State == 1) friend['Status'] = "Pending"; else friend['Status'] = "Confirmed";
+                    callback(null, friend);
+                }else {
+                    callback(null, false);
+                }
+            }
+        });
+    };
+
+    function iterateUser(items, userid, callback) {
+        for(var i = 0; i< items.length; i++){
+            items[i].index = i;
+        }
+        var arrResult = [];
+        items.forEach(function(index){
+            getRelationStatus(userid, index['ID'], function (err, result) {
+                if(err){
+                    callback(err, null);
+                }else {
+                    if(result == false){
+                        index['Friend'] = false;
+                    }else {
+                        index['Friend'] = true;
+                        index['RelationInfo'] = result;
+                    }
+                }
+                arrResult.push(index);
+                if(index['index'] == items.length-1){
+                    for(var i = 0; i< arrResult.length; i++){
+                        delete arrResult[i]['index'];
+                        delete arrResult[i]['Password'];
+                        delete arrResult[i]['_id'];
+                        delete arrResult[i]['flag'];
+                        delete arrResult[i]['foto'];
+                        delete arrResult[i]['PushID'];
+                        delete arrResult[i]['Path_foto'];
+                        delete arrResult[i]['Nama_foto'];
+                        delete arrResult[i]['Path_ktp'];
+                        delete arrResult[i]['Nama_ktp'];
+                        delete arrResult[i]['facebookID'];
+                        delete arrResult[i]['ID_role'];
+                        delete arrResult[i]['ID_ktp'];
+                        delete arrResult[i]['Plat_motor'];
+                        delete arrResult[i]['VerifiedNumber'];
+                        delete arrResult[i]['Barcode'];
+                        delete arrResult[i]['Status_online'];
+                    }
+                    callback(null, arrResult);
+                }
+            });
+
+        });
+    }
 };

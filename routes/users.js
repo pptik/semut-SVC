@@ -63,7 +63,7 @@ router.post('/getprofilebyid', function(req, res, next) {
   if(sessid == null || userid == null) {
     res.status(200).send({success: false, message: "parameter tidak lengkap"});
   }else {
-    userModel.getProfileById(req.body, function (err, result) {
+    userController.getProfileById(req.body, function (err, result) {
       if(err){
         res.status(200).send({success: false, message: "Server bermasalah"});
       }else {
@@ -81,7 +81,7 @@ router.post('/search', function(req, res, next) {
   if(sessid == null || key == null) {
     res.status(200).send({success: false, message: "parameter tidak lengkap"});
   }else {
-    userModel.search(req.body, function (err, result) {
+    userController.searchUser(req.body, function (err, result) {
       if(err){
         res.status(200).send({success: false, message: "Server bermasalah"});
       }else {

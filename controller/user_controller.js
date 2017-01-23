@@ -82,3 +82,59 @@ exports.getProfile = function (call, callback) {
         }
     })
 };
+
+
+exports.getProfileById = function (call, callback) {
+    userModel.checkSession(call['SessionID'], function (err, userID) {
+       if(err) callback(err,null);
+       else {
+           if(userID){
+               userModel.getProfileById(parseInt(call['UserID']), function (err, profile) {
+                   if(err) callback(err, null);
+                   else {
+                      if(profile){
+                          var res = messages.request_success;
+                          res['Profile'] = profile;
+                          userModel.getRelationStatus(userID, parseInt(call['UserID']), function (err, friend) {
+                             if(err){
+                                 callback(err, null);
+                             } else {
+                                 if(friend == false){
+                                     res['Friend'] = false;
+                                     callback(null, res);
+                                 }else {
+                                     res['Friend'] = true;
+                                     res['RelationInfo'] = friend;
+                                     callback(null, res);
+                                 }
+                             }
+                          });
+
+                      }  else {
+                          callback(null, messages.user_not_found);
+                      }
+                   }
+               });
+           }else {
+               callback(null, messages.invalid_session);
+           }
+       }
+    });
+};
+
+exports.searchUser = function (call, callback) {
+    userModel.checkSession(call['SessionID'], function (err, userID) {
+        if (err) callback(err, null);
+        else {
+            if (userID) {
+                userModel.searchUser(call['Keyword'], userID, function (err, results) {
+                   if(results){
+                       callback(null, {success: true, message: "Ditemukan "+results.length+" hasil pencarian untuk kata pencarian "+"'"+call['Keyword']+"'", size:results.length,  profiles :results});
+                   } else {
+                       callback(null, {success: false, message: "Tidak ditemukan hasil untuk kata pencarian "+"'"+call['Keyword']+"'"});
+                   }
+                });
+            }
+        }
+    });
+};

@@ -25,5 +25,13 @@
   "request_success":{
     "success": true,
     "message": "Berhasil memuat permintaan"
+  },
+  "already_sent_request":{
+    "success":false,
+    "message": "Anda telah mengirimkan permintaan pertemanan sebelumnya"
+  },
+  "relation_not_found":{
+    "success": false,
+    "message": "Relasi tidak ditemukan"
   }
 }
