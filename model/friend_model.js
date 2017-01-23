@@ -61,8 +61,7 @@ function insertRequest(user1, user2, callback) {
 }
 
 function updateRelation(realtionID, callback) {
-    console.log(realtionID);
-    relationCollection.updateOne({ID: realtionID, State: 1}, { $set: { State:2, ResponseTime : moment().format('YYYY-MM-DD HH:mm:ss')}}, function (err, result) {
+    relationCollection.updateOne({ID: parseInt(realtionID), State: 1}, { $set: { State:2, ResponseTime : moment().format('YYYY-MM-DD HH:mm:ss')}}, function (err, result) {
         if(err){
             callback(err, null);
         }else {
