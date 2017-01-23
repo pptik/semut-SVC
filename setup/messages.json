@@ -1,0 +1,29 @@
+{"server_error":{
+  "success": false,
+  "message": "Server tidak merespon, silahkan coba beberapa saat lagi"
+  },
+  "invalid_session":{
+    "success": false,
+    "message": "Kode sesi tidak sesuai atau sudah tidak berlaku"
+  },
+  "email_already_use":{
+    "success": false,
+    "message": "Email sudah digunakan"
+  },
+  "email_or_password_invalid":{
+    "success": false,
+    "message": "Email atau password yang Anda masukkan salah"
+  },
+  "user_not_found":{
+    "success": false,
+    "message": "Pengguna tidak ditemukan"
+  },
+  "account_created":{
+    "success": true,
+    "messages": "Berhasil membuat akun"
+  },
+  "request_success":{
+    "success": true,
+    "message": "Berhasil memuat permintaan"
+  }
+}

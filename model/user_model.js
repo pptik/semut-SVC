@@ -53,6 +53,21 @@ exports.getSession = function (userID, callback) {
     });
 };
 
+exports.checkSession = function(sessid, callback) {
+    sessionCollection.find({ID: sessid}).toArray(function (err, results) {
+        if (err) {
+            console.log(err);
+            callback(err, null);
+        } else {
+            if(results[0]) {
+                callback(null, results[0].UserID);
+            }else {
+                callback(null, null);
+            }
+        }
+    });
+}
+
 
 exports.getProfileById = function(iduser, callback) {
     userCollection.find({ID: iduser}).toArray(function (err, results) {

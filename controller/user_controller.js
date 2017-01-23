@@ -1,5 +1,6 @@
 var userModel = require('../model/user_model');
 var md5 = require('md5');
+var messages = require('../setup/messages.json');
 
 exports.login = function (call, callback) {
     userModel.findEmail(call['Email'], function (err, result) {
@@ -32,10 +33,10 @@ exports.login = function (call, callback) {
                       }
                    });
                }else {
-                   callback(null, {success:false, message: "Alamat email atau kata sandi tidak tepat"});
+                   callback(null, messages.email_or_password_invalid);
                }
            }else {
-               callback(null, {success:false, message: "Alamat email atau kata sandi tidak tepat"});
+               callback(null, messages.email_or_password_invalid);
            }
        }
     });
@@ -47,16 +48,37 @@ exports.signup = function (call, callback) {
          callback(err, null);
      } else {
          if(emails[0]){
-             callback(null, {success:false, message: "Email sudah terdaftar"});
+             callback(null, messages.email_already_use);
          }else {
              userModel.insertUser(call, function (err, user) {
                 if(err){
                     callback(err, null);
                 } else {
-                    callback(null, {success:true, message: "Berhasil membuat akun"});
+                    callback(null, messages.account_created);
                 }
              });
          }
      }
   });
+};
+
+
+exports.getProfile = function (call, callback) {
+    userModel.checkSession(call['SessionID'], function (err, userID) {
+        if(err){
+            callback(err, null);
+        }else {
+            if(userID != null){
+                userModel.getProfileById(userID, function (err, profile) {
+                   if(err){
+                       callback(err, null);
+                   } else {
+                       callback(null, {success:true, message: "berhasil memuat permintaan", Profile:profile});
+                   }
+                });
+            }else {
+                callback(null, messages.invalid_session);
+            }
+        }
+    })
 };
