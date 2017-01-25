@@ -33,5 +33,9 @@
   "relation_not_found":{
     "success": false,
     "message": "Relasi tidak ditemukan"
+  },
+  "gps_tracker_already_register":{
+    "success": false,
+    "message": "GPS Tracker sudah terdaftar sebelumnya"
   }
 }

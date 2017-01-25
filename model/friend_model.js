@@ -71,7 +71,7 @@ function updateRelation(realtionID, callback) {
 }
 
 
-module.exports ={
+module.exports = {
     checkRelation : checkRelation,
     insertRequest : insertRequest,
     checkRelationByID : checkRelationByID,
