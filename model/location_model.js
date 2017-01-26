@@ -59,30 +59,6 @@ function getNearby(location, params, callback) {
 }
 
 
-//------- use this to update doc with 2d loc
-function test(callback) {
-    locationCollection.find({}).toArray(function (err, locs) {
-       if(err) callback(err, null);
-       else {
-           for(var i = 0; i< locs.length; i++){
-               locs[i].index = i;
-           }
-           locs.forEach(function(index){
-               locationCollection.updateOne({_id: index['_id']},{ $set: { location:[index['Latitude'], index['Longitude']]}}, function(err, result) {
-                   if(err){
-                       callback(err, null);
-                   }else {
-                       if(index['index'] == locs.length-1) {
-                           callback(null, "success");
-                       }
-                   }
-               });
-
-           });
-
-       }
-    });
-}
 
 
 

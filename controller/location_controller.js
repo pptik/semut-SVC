@@ -52,12 +52,3 @@ exports.mapview = function (call, callback) {
 };
 
 
-exports.test = function (call, callback) {
-    locationModel.test(function (err, userID) {
-        if(err)callback(err, null);
-        else {
-            callback(null, userID);
-        }
-    });
-};
-
