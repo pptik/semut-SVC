@@ -23,7 +23,9 @@ router.post('/store', function(req, res, next) {
 
 
 router.post('/mapview', function(req, res, next) {
-    if(req.body['SessionID'] == null){
+
+    if(req.body['SessionID'] == null || req.body['Radius'] == null || req.body['Limit'] == null
+        || req.body['Item'] == null || req.body['Latitude'] == null || req.body['Longitude'] == null){
         res.status(200).send({success: false, message: "Parameter tidak lengkap"});
     }else {
         locationController.mapview(req.body, function (err, result) {

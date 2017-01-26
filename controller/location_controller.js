@@ -2,16 +2,17 @@ var locationModel = require('../model/location_model');
 var userModel = require('../model/user_model');
 var messages = require('../setup/messages.json');
 
-var mapValues = {
-    userpost: 1,
-    cctvpost: 2,
-    policepost: 4,
-    accidentpost: 8,
-    trafficpost: 16,
-    otherpost: 32,
-    commutertrain: 64,
-    angkot: 128
-};
+var valuesIndex = [
+    {userLocation:0},
+    {userPost: 1},
+    {cctvPost: 2},
+    {policePost: 3},
+    {accidentPost: 4},
+    {trafficPost: 5},
+    {otherPost: 6},
+    {commuterTrain: 7},
+    {angkotLocation: 8}
+];
 
 exports.store = function (call, callback) {
     userModel.checkSession(call['SessionID'], function (err, userID) {
@@ -49,7 +50,16 @@ exports.mapview = function (call, callback) {
         if(err)callback(err, null);
         else {
             if(userID){
-                locationModel.getNearby({Latitude: -6.176341, Longitude: 106.787865}, function (err, users) {
+                locationModel.getNearby(
+                    {
+                        Latitude: parseFloat(call['Latitude']),
+                        Longitude: parseFloat(call['Longitude']),
+                        UserID: userID,
+                        Radius: parseFloat(call['Radius']),
+                        Limit: parseInt(call['Limit']),
+                        Item : parseInt(call['Item'])
+
+                    }, function (err, users) {
                    if(err) callback(err, null);
                     else {
                         callback(null, users);
@@ -59,6 +69,8 @@ exports.mapview = function (call, callback) {
         }
     });
 };
+
+
 
 
 
