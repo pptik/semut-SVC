@@ -59,42 +59,27 @@ function getNearby(location, params, callback) {
 }
 
 
+//------- use this to update doc with 2d loc
 function test(callback) {
-    userCollections.find({}).toArray(function (err, users) {
-       if(err)callback(err, null);
-        else {
-            console.log("userrrrs", users.length);
-           for(var i = 0; i< users.length; i++){
-               users[i].index = i;
+    locationCollection.find({}).toArray(function (err, locs) {
+       if(err) callback(err, null);
+       else {
+           for(var i = 0; i< locs.length; i++){
+               locs[i].index = i;
            }
-           users.forEach(function(index){
-                var useid = index['ID'];
-               locationCollection.find({UserID: useid}).toArray(function (err, locs) {
-                  if(err) callback(err, null);
-                   else {
-                       console.log("locccccss",locs.length);
-                      for(var i = 0; i< locs.length; i++){
-                          locs[i].index = i;
-                      }
-                      locs.forEach(function (locIndex){
-                          if(locIndex['index'] == locs.length-1){
-
-                          }else {
-                              locationCollection.removeOne({_id:locIndex['_id']},
-                              function (err, ok) {
-                                 if(err)callback(err, null);
-                                  else {
-                                      console.log("remove loc id : ",locIndex['_id'], "id : "+useid);
-                                 }
-                              });
-                          }
-                      });
-                  }
+           locs.forEach(function(index){
+               locationCollection.updateOne({_id: index['_id']},{ $set: { location:[index['Latitude'], index['Longitude']]}}, function(err, result) {
+                   if(err){
+                       callback(err, null);
+                   }else {
+                       if(index['index'] == locs.length-1) {
+                           callback(null, "success");
+                       }
+                   }
                });
-               if(index['index'] == users.length-1){
-                   callback(null, "shit");
-               }
+
            });
+
        }
     });
 }
@@ -104,5 +89,6 @@ function test(callback) {
 module.exports = {
     insertOrUpdate:insertOrUpdate,
     insertToHistory:insertToHistory,
-    getNearby:getNearby
+    getNearby:getNearby,
+    test:test
 };
