@@ -24,7 +24,11 @@ exports.store = function (call, callback) {
                    'Altitude': parseFloat(call['Altitude']),
                    'Latitude': parseFloat(call['Latitude']),
                    'Longitude': parseFloat(call['Longitude']),
-                   'Speed': parseFloat(call['Speed'])
+                   'Speed': parseFloat(call['Speed']),
+                   'location':{
+                       'type': 'Point',
+                       'coordinates': [parseFloat(call['Longitude']), parseFloat(call['Latitude'])]
+                   }
                };
                locationModel.insertOrUpdate(query, function (err, result) {
                   if(err)callback(err, null);
@@ -45,10 +49,16 @@ exports.mapview = function (call, callback) {
         if(err)callback(err, null);
         else {
             if(userID){
-
+                locationModel.getNearby({Latitude: -6.176341, Longitude: 106.787865}, function (err, users) {
+                   if(err) callback(err, null);
+                    else {
+                        callback(null, users);
+                   }
+                });
             }else callback(null, messages.invalid_session);
         }
     });
 };
+
 
 

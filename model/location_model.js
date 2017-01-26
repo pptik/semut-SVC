@@ -52,11 +52,38 @@ function insertToHistory(query, callback) {
 }
 
 
-function getNearby(location, params, callback) {
-    var latitude = location['Latitude'];
-    var longitude = location['Longitude'];
+function getNearby(location, callback) {
+    var latitude = parseFloat(location['Latitude']);
+    var longitude = parseFloat(location['Longitude']);
+    console.log(latitude, longitude);
 
+/*
+    locationCollection.createIndex({ location: "2dsphere" }, function (err, res) {
+       if(err)callback(err, null);
+        else {
+            callback(null, res);
+       }
+    }); */
+
+    locationCollection.find(
+        {
+            location:
+            { $near :
+            {
+                $geometry: { type: "Point",  coordinates: [ longitude, latitude ] },
+                $minDistance: 1,
+                $maxDistance: 3000
+            }
+            }
+        }
+    ).toArray(function (err, users) {
+       if(err)callback(err, null);
+        else {
+            callback(null, users);
+       }
+    });
 }
+
 
 
 
@@ -65,6 +92,5 @@ function getNearby(location, params, callback) {
 module.exports = {
     insertOrUpdate:insertOrUpdate,
     insertToHistory:insertToHistory,
-    getNearby:getNearby,
-    test:test
-};
+    getNearby:getNearby
+}

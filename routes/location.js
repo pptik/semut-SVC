@@ -22,6 +22,25 @@ router.post('/store', function(req, res, next) {
 
 
 
+router.post('/mapview', function(req, res, next) {
+    if(req.body['SessionID'] == null){
+        res.status(200).send({success: false, message: "Parameter tidak lengkap"});
+    }else {
+        locationController.mapview(req.body, function (err, result) {
+            if(err){
+                console.log(err);
+                res.status(200).send({status: false, message:"Server tidak merespon"});
+            }else {
+                res.status(200).send(result);
+            }
+        })
+    }
+
+});
+
+
+
+
 
 
 module.exports = router;
