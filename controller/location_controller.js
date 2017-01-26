@@ -39,3 +39,15 @@ exports.store = function (call, callback) {
        }
     });
 };
+
+exports.mapview = function (call, callback) {
+    userModel.checkSession(call['SessionID'], function (err, userID) {
+        if(err)callback(err, null);
+        else {
+            if(userID){
+
+            }else callback(null, messages.invalid_session);
+        }
+    });
+};
+
