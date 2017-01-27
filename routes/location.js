@@ -40,9 +40,4 @@ router.post('/mapview', function(req, res, next) {
 
 });
 
-
-
-
-
-
 module.exports = router;

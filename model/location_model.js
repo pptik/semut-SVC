@@ -119,13 +119,13 @@ function iterateFriendInfo(items, UserID, callback) {
     }
     var arrResult = [];
     items.forEach(function(index){
-        userModel.getRelationStatus(UserID, index['UserID'], function (err, profile) {
+        userModel.getRelationStatus(UserID, index['ID'], function (err, profile) {
             if(err)callback(err, null);
             else {
                 if(profile == false) index.Friend = false;
                 else {
                     index.Friend = true;
-                    index.RelationInfo = profile;
+                    index.Relation = profile;
                 }
                 arrResult.push(index);
                 if(index['index'] == items.length-1){

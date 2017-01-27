@@ -16,7 +16,7 @@ exports.request = function (call, callback) {
                            if(err){
                                callback(err, null);
                            } else {
-                                userModel.getRelationStatus(call['UserID'], userID, function (err, relationInfo) {
+                                userModel.getRelationStatus(userID,call['UserID'], function (err, relationInfo) {
                                    if(err){
                                        callback(err, null);
                                    } else {
