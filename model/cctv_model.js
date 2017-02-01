@@ -27,13 +27,6 @@ function getCCTVNearby(query, callback) {
             callback(null, cctvs);
         }
     });
-
-
-    /*
-    cctvCollection.createIndex({location:"2dsphere"}, function (err, res) {
-        if(err)callback(err, null);
-        else callback(null, res);
-    }); */
 }
 
 

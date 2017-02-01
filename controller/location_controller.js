@@ -59,10 +59,14 @@ exports.mapview = function (call, callback) {
             if(userID){
                 checkItem(call['Item'].toString());
                 var filter = getFilter(valuesIndex);
-                Promise.all([getCCTVLocation(filter.userLocation, call, userID)]).then(function(results) {
+                Promise.all([
+                    getUserLocation(filter.userLocation, call, userID),
+                    getCCTVLocation(filter.cctvPost, call, userID)
+
+                ]).then(function(results) {
                     callback(null, results);
                 }).catch(function(err) {
-                    console.log('Catch: ', err);
+                    callback(err, null);
                 });
 
             }else callback(null, messages.invalid_session);
@@ -87,11 +91,11 @@ function getUserLocation(state, query, userID) {
                     Limit: parseInt(query['Limit'])
 
                 }, function (err, users) {
-                    if(users) resolve(users);
+                    if(users) resolve({Users:users});
                     else reject(err);
                 });
         }else {
-            reject({request: false});
+            resolve({Users:[]});
         }
     });
 }
@@ -108,11 +112,11 @@ function getCCTVLocation(state, query, userID) {
                     Limit: parseInt(query['Limit'])
 
                 }, function (err, users) {
-                    if(users) resolve(users);
+                    if(users) resolve({CCTV:users});
                     else reject(err);
                 });
         }else {
-            reject({request: false});
+            resolve({CCTV:[]});
         }
     });
 }
