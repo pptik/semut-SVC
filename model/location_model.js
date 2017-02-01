@@ -5,8 +5,36 @@ db = app.db;
 
 var locationCollection = db.collection('tb_location');
 var locationHistoryCollection = db.collection('tb_location_history');
-var userCollections = db.collection('tb_user');
 var userModel = require('../model/user_model');
+
+
+
+
+var cctvCollection = db.collection('tb_cctv');
+
+function test(callback) {
+    cctvCollection.find({}).toArray(function (err, locs) {
+        if(err) callback(err, null);
+        else {
+            for(var i = 0; i< locs.length; i++){
+                locs[i].index = i;
+            }
+            locs.forEach(function(index){
+                cctvCollection.updateOne({_id: index['_id']},{ $set: { location:{type: 'Point', coordinates:[index['Longitude'], index['Latitude']]}}}, function(err, result) {
+                    if(err){
+                        callback(err, null);
+                    }else {
+                        if(index['index'] == locs.length-1) {
+                            callback(null, "success");
+                        }
+                    }
+                });
+
+            });
+
+        }
+    });
+}
 
 function insertOrUpdate(query, callback) {
     locationCollection.find({UserID : parseInt(query['UserID'])}).toArray(function (err, results) {
@@ -142,5 +170,6 @@ function iterateFriendInfo(items, UserID, callback) {
 module.exports = {
     insertOrUpdate:insertOrUpdate,
     insertToHistory:insertToHistory,
-    getUserNearby:getUserNearby
+    getUserNearby:getUserNearby,
+    test:test
 };

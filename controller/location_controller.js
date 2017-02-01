@@ -1,4 +1,5 @@
 var locationModel = require('../model/location_model');
+var cctvModel = require('../model/cctv_model');
 var userModel = require('../model/user_model');
 var messages = require('../setup/messages.json');
 
@@ -13,6 +14,10 @@ var valuesIndex = [
     {commuterTrain: 7},
     {angkotLocation: 8}
 ];
+
+
+
+
 
 exports.store = function (call, callback) {
     userModel.checkSession(call['SessionID'], function (err, userID) {
@@ -54,7 +59,7 @@ exports.mapview = function (call, callback) {
             if(userID){
                 checkItem(call['Item'].toString());
                 var filter = getFilter(valuesIndex);
-                Promise.all([getUserLocation(filter.userLocation, call, userID)]).then(function(results) {
+                Promise.all([getCCTVLocation(filter.userLocation, call, userID)]).then(function(results) {
                     callback(null, results);
                 }).catch(function(err) {
                     console.log('Catch: ', err);
@@ -74,6 +79,27 @@ function getUserLocation(state, query, userID) {
     return new Promise(function(resolve, reject) {
         if(state == true){
             locationModel.getUserNearby(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    UserID: userID,
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit'])
+
+                }, function (err, users) {
+                    if(users) resolve(users);
+                    else reject(err);
+                });
+        }else {
+            reject({request: false});
+        }
+    });
+}
+
+function getCCTVLocation(state, query, userID) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            cctvModel.getCCTVNearby(
                 {
                     Latitude: parseFloat(query['Latitude']),
                     Longitude: parseFloat(query['Longitude']),
