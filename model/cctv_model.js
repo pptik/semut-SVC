@@ -10,7 +10,6 @@ var cctvCollection = db.collection('tb_cctv');
 function getCCTVNearby(query, callback) {
     var latitude = parseFloat(query['Latitude']);
     var longitude = parseFloat(query['Longitude']);
-    /*
     cctvCollection.find(
         {
             location:
@@ -27,11 +26,14 @@ function getCCTVNearby(query, callback) {
         else {
             callback(null, cctvs);
         }
-    }); */
-    cctvCollection.createIndex({point:"2dsphere"}, function (err, res) {
+    });
+
+
+    /*
+    cctvCollection.createIndex({location:"2dsphere"}, function (err, res) {
         if(err)callback(err, null);
         else callback(null, res);
-    });
+    }); */
 }
 
 
