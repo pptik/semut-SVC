@@ -45,34 +45,68 @@ exports.store = function (call, callback) {
     });
 };
 
+
 exports.mapview = function (call, callback) {
+    query = call;
     userModel.checkSession(call['SessionID'], function (err, userID) {
         if(err)callback(err, null);
         else {
             if(userID){
                 var itemFilter = checkItem(call['Item'].toString());
                 console.log(itemFilter);
-                console.log(JSON.stringify(valuesIndex));
-                locationModel.getNearby(
-                    {
-                        Latitude: parseFloat(call['Latitude']),
-                        Longitude: parseFloat(call['Longitude']),
-                        UserID: userID,
-                        Radius: parseFloat(call['Radius']),
-                        Limit: parseInt(call['Limit']),
-                        Item : parseInt(call['Item'])
-
-                    }, function (err, users) {
-                   if(err) callback(err, null);
-                    else {
-                        callback(null, users);
-                   }
+                var filter = getFilter(valuesIndex);
+                Promise.all([getUserLocation(filter.userLocation, call)]).then(function(results) {
+                    console.log('Then: ', results);
+                }).catch(function(err) {
+                    console.log('Catch: ', err);
                 });
+
             }else callback(null, messages.invalid_session);
         }
     });
 };
 
+
+//---------------- function --------------------//
+
+// P R O M I S E S
+
+function getUserLocation(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            locationModel.getUserNearby(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    UserID: query,
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit'])
+
+                }, function (err, users) {
+                    if(users) resolve(users);
+                    else reject(err);
+                });
+        }else {
+            reject({request: false});
+        }
+    });
+}
+
+
+
+
+
+function getFilter(arr) {
+    var filter = {};
+    for(var i = 0; i < arr.length; i++) {
+        for (var k in arr[i]) {
+            if (arr[i].hasOwnProperty(k)) {
+                filter[k] = arr[i][k];
+            }
+        }
+    }
+    return filter;
+}
 
 function checkItem(items) {
     items = items.split('');
