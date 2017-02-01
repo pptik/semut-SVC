@@ -143,4 +143,4 @@ module.exports = {
     insertOrUpdate:insertOrUpdate,
     insertToHistory:insertToHistory,
     getNearby:getNearby
-}
+};

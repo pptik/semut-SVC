@@ -50,6 +50,9 @@ exports.mapview = function (call, callback) {
         if(err)callback(err, null);
         else {
             if(userID){
+                var itemFilter = checkItem(call['Item'].toString());
+                console.log(itemFilter);
+                console.log(JSON.stringify(valuesIndex));
                 locationModel.getNearby(
                     {
                         Latitude: parseFloat(call['Latitude']),
@@ -69,6 +72,58 @@ exports.mapview = function (call, callback) {
         }
     });
 };
+
+
+function checkItem(items) {
+    items = items.split('');
+    for(var i = 0; i <items.length; i++){
+        items[i] = parseInt(items[i]);
+    }
+    if(items.length < valuesIndex.length){
+        var _s = valuesIndex.length - items.length;
+        for(var i = 0; i < _s; i++){
+            items.push(0);
+        }
+        for(var i =0; i < items.length; i++){
+            if(items[i] == 0){
+                items[i] = false;
+                for(var propName in valuesIndex[i]) {
+                    if(valuesIndex[i].hasOwnProperty(propName)) {
+                        valuesIndex[i][propName] = false;
+                    }
+                }
+            }else {
+                items[i] = true;
+                for(var propName in valuesIndex[i]) {
+                    if(valuesIndex[i].hasOwnProperty(propName)) {
+                        valuesIndex[i][propName] = true;
+                    }
+                }
+            }
+        }
+        return items;
+    }else if(items.length > valuesIndex.length){
+        items.splice(valuesIndex.length, items.length-valuesIndex.length);
+        for(var i =0; i < items.length; i++){
+            if(items[i] == 0){
+                items[i] = false;
+                for(var propName in valuesIndex[i]) {
+                    if(valuesIndex[i].hasOwnProperty(propName)) {
+                        valuesIndex[i][propName] = false;
+                    }
+                }
+            }else {
+                items[i] = true;
+                for(var propName in valuesIndex[i]) {
+                    if(valuesIndex[i].hasOwnProperty(propName)) {
+                        valuesIndex[i][propName] = true;
+                    }
+                }
+            }
+        }
+        return items;
+    }
+}
 
 
 
