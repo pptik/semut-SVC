@@ -52,11 +52,10 @@ exports.mapview = function (call, callback) {
         if(err)callback(err, null);
         else {
             if(userID){
-                var itemFilter = checkItem(call['Item'].toString());
-                console.log(itemFilter);
+                checkItem(call['Item'].toString());
                 var filter = getFilter(valuesIndex);
-                Promise.all([getUserLocation(filter.userLocation, call)]).then(function(results) {
-                    console.log('Then: ', results);
+                Promise.all([getUserLocation(filter.userLocation, call, userID)]).then(function(results) {
+                    callback(null, results);
                 }).catch(function(err) {
                     console.log('Catch: ', err);
                 });
@@ -71,14 +70,14 @@ exports.mapview = function (call, callback) {
 
 // P R O M I S E S
 
-function getUserLocation(state, query) {
+function getUserLocation(state, query, userID) {
     return new Promise(function(resolve, reject) {
         if(state == true){
             locationModel.getUserNearby(
                 {
                     Latitude: parseFloat(query['Latitude']),
                     Longitude: parseFloat(query['Longitude']),
-                    UserID: query,
+                    UserID: userID,
                     Radius: parseFloat(query['Radius']),
                     Limit: parseInt(query['Limit'])
 
