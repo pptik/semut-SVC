@@ -3,8 +3,8 @@ db = app.db;
 
 var postCollection = db.collection('tb_post');
 
-function findPostNearby(dateNow) {
-    dateNow = '2014-05-21 09:12:46';
+function findPostNearby(query) {
+    var dateNow = '2014-05-21 09:12:46';
     console.log(new Date(dateNow));
     return new Promise(function (resolve, reject) {
         postCollection.find({"Exp" : { $gte : new Date(dateNow)}}).toArray(function (err, posts) {

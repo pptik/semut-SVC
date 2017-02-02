@@ -62,6 +62,7 @@ exports.mapview = function (call, callback) {
                 var filter = getFilter(valuesIndex);
                 Promise.all([
                     getUserLocation(filter.userLocation, call, userID),
+                    getPosts(filter.userPost, call, userID),
                     getCCTVLocation(filter.cctvPost, call, userID)
 
                 ]).then(function(results) {
@@ -101,6 +102,27 @@ function getUserLocation(state, query, userID) {
     });
 }
 
+function getPosts(state, query, userID) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            postModel.findPostNearby(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    UserID: userID,
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit'])
+                }).then(function (posts) {
+                resolve({Posts:posts});
+            }).catch(function (err) {
+                reject(err);
+            });
+        }else {
+            resolve({Posts:[]});
+        }
+    });
+}
+
 function getCCTVLocation(state, query, userID) {
     return new Promise(function(resolve, reject) {
         if(state == true){
@@ -114,7 +136,6 @@ function getCCTVLocation(state, query, userID) {
 
                 }, function (err, cctvs) {
                     if(cctvs) {
-                        //resolve({CCTV:cctvs})
                         iterateCCTV(cctvs).then(function (details) {
                             resolve({CCTV:details})
                         }).catch(function (err) {

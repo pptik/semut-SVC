@@ -8,7 +8,6 @@ var cctvCollection = db.collection('tb_cctv');
 function getCCTVNearby(query, callback) {
     var latitude = parseFloat(query['Latitude']);
     var longitude = parseFloat(query['Longitude']);
-    console.log(query['Limit']);
     cctvCollection.find(
         {
             location:
