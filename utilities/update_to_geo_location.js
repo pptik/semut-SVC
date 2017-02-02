@@ -23,7 +23,7 @@ function test(collection, callback) {
 }
 
 function createIndex(collection, callback) {
-    collection.createIndex({point:"2dsphere"}, function (err, res) {
+    collection.createIndex({location:"2dsphere"}, function (err, res) {
         if(err)callback(err, null);
         else callback(null, res);
     });

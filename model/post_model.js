@@ -4,10 +4,26 @@ db = app.db;
 var postCollection = db.collection('tb_post');
 
 function findPostNearby(query) {
-    var dateNow = '2014-05-21 09:12:46';
+    var dateNow = new Date();
+   // var dateNow = '2014-05-21 09:12:46';
+    var latitude = parseFloat(query['Latitude']);
+    var longitude = parseFloat(query['Longitude']);
     console.log(new Date(dateNow));
     return new Promise(function (resolve, reject) {
-        postCollection.find({"Exp" : { $gte : new Date(dateNow)}}).limit(query['Limit']).toArray(function (err, posts) {
+        postCollection.find(
+            {$and: [{"Exp" : { $gte : new Date(dateNow)}},
+                {
+                    location:
+                    { $near :
+                    {
+                        $geometry: { type: "Point",  coordinates: [ longitude, latitude ] },
+                        $minDistance: 1,
+                        $maxDistance: query['Radius']
+                    }
+                    }
+                }
+            ]})
+            .limit(query['Limit']).toArray(function (err, posts) {
             if(err)reject(err);
             else {
                 for(var i=0;i<posts.length;i++){
