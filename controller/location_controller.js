@@ -53,7 +53,7 @@ exports.store = function (call, callback) {
 
 
 exports.mapview = function (call, callback) {
-    query = call;
+   /*
     userModel.checkSession(call['SessionID'], function (err, userID) {
         if(err)callback(err, null);
         else {
@@ -73,6 +73,14 @@ exports.mapview = function (call, callback) {
             }else callback(null, messages.invalid_session);
         }
     });
+    */
+   var app = require('../app');
+   var con = require('../utilities/convert_date_to_iso');
+    con.convert(app.db, 'tb_post').then(function (res) {
+        callback(null, res);
+    }).catch(function (err) {
+        callback(err, null);
+    })
 };
 
 
