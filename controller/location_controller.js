@@ -62,7 +62,8 @@ exports.mapview = function (call, callback) {
                 var filter = getFilter(valuesIndex);
                 Promise.all([
                     getUserLocation(filter.userLocation, call, userID),
-                    getPosts(filter.userPost, call, userID),
+                    getPolicePosts(filter.userPost, call, userID),
+                    getAccidents(filter.accidentPost, call, userID),
                     getCCTVLocation(filter.cctvPost, call, userID)
 
                 ]).then(function(results) {
@@ -101,7 +102,7 @@ function getUserLocation(state, query, userID) {
     });
 }
 
-function getPosts(state, query, userID) {
+function getPolicePosts(state, query, userID) {
     return new Promise(function(resolve, reject) {
         if(state == true){
             postModel.findPostNearby(
@@ -110,14 +111,38 @@ function getPosts(state, query, userID) {
                     Longitude: parseFloat(query['Longitude']),
                     UserID: userID,
                     Radius: parseFloat(query['Radius']),
-                    Limit: parseInt(query['Limit'])
+                    Limit: parseInt(query['Limit']),
+                    Type:2
                 }).then(function (posts) {
-                resolve({Posts:posts});
+                resolve({Polices:posts});
             }).catch(function (err) {
                 reject(err);
             });
         }else {
-            resolve({Posts:[]});
+            resolve({Polices:[]});
+        }
+    });
+}
+
+
+function getAccidents(state, query, userID) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            postModel.findPostNearby(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    UserID: userID,
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:3
+                }).then(function (posts) {
+                resolve({Accidents:posts});
+            }).catch(function (err) {
+                reject(err);
+            });
+        }else {
+            resolve({Accidents:[]});
         }
     });
 }

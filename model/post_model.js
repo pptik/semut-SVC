@@ -4,14 +4,16 @@ db = app.db;
 var postCollection = db.collection('tb_post');
 
 function findPostNearby(query) {
-    var dateNow = new Date();
-   // var dateNow = '2014-05-21 09:12:46';
+  //  var dateNow = new Date();
+    var dateNow = '2014-05-21 09:12:46';
     var latitude = parseFloat(query['Latitude']);
     var longitude = parseFloat(query['Longitude']);
     console.log(new Date(dateNow));
     return new Promise(function (resolve, reject) {
         postCollection.find(
-            {$and: [{"Exp" : { $gte : new Date(dateNow)}},
+            {$and: [
+                {
+                    Exp : { $gte : new Date(dateNow)}},
                 {
                     location:
                     { $near :
@@ -21,7 +23,8 @@ function findPostNearby(query) {
                         $maxDistance: query['Radius']
                     }
                     }
-                }
+                },
+                {SubType:query['Type']}
             ]})
             .limit(query['Limit']).toArray(function (err, posts) {
             if(err)reject(err);
@@ -35,6 +38,14 @@ function findPostNearby(query) {
         });
     });
 }
+
+
+
+function insertPost() {
+    
+}
+
+
 
 function convertISODateToString(date) {
     var year = date.getFullYear();
