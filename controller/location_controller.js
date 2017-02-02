@@ -2,6 +2,7 @@ var locationModel = require('../model/location_model');
 var cctvModel = require('../model/cctv_model');
 var userModel = require('../model/user_model');
 var messages = require('../setup/messages.json');
+var geoPlaceModel = require('../model/geo_place_model');
 
 var valuesIndex = [
     {userLocation:0},
@@ -111,8 +112,15 @@ function getCCTVLocation(state, query, userID) {
                     Radius: parseFloat(query['Radius']),
                     Limit: parseInt(query['Limit'])
 
-                }, function (err, users) {
-                    if(users) resolve({CCTV:users});
+                }, function (err, cctvs) {
+                    if(cctvs) {
+                        //resolve({CCTV:cctvs})
+                        iterateCCTV(cctvs).then(function (details) {
+                            resolve({CCTV:details})
+                        }).catch(function (err) {
+                           reject(err);
+                        });
+                    }
                     else reject(err);
                 });
         }else {
@@ -123,7 +131,36 @@ function getCCTVLocation(state, query, userID) {
 
 
 
+//--------------------- regular
 
+function iterateCCTV(items) {
+    for(var i = 0; i< items.length; i++){
+        items[i].index = i;
+    }
+    return new Promise(function(resolve, reject) {
+        var arrResult = [];
+        items.forEach(function(index){
+            geoPlaceModel.getCity(index['CityID']).then(function (city) {
+                if(index['index'] == items.length-1){
+                    delete index['index'];
+                    delete index['CityID'];
+                    index['City'] = city['Name'];
+                    arrResult.push(index);
+                    resolve(arrResult);
+                }else {
+                    delete index['index'];
+                    delete index['CityID'];
+                    index['City'] = city['Name'];
+                    arrResult.push(index);
+                    resolve(arrResult);
+                }
+            }).catch(function(err) {
+                reject(err);
+            });
+        });
+    });
+
+}
 
 function getFilter(arr) {
     var filter = {};
