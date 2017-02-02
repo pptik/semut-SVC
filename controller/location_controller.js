@@ -3,6 +3,7 @@ var cctvModel = require('../model/cctv_model');
 var userModel = require('../model/user_model');
 var messages = require('../setup/messages.json');
 var geoPlaceModel = require('../model/geo_place_model');
+var postModel = require('../model/post_model');
 
 var valuesIndex = [
     {userLocation:0},
@@ -53,7 +54,6 @@ exports.store = function (call, callback) {
 
 
 exports.mapview = function (call, callback) {
-   /*
     userModel.checkSession(call['SessionID'], function (err, userID) {
         if(err)callback(err, null);
         else {
@@ -73,14 +73,6 @@ exports.mapview = function (call, callback) {
             }else callback(null, messages.invalid_session);
         }
     });
-    */
-   var app = require('../app');
-   var con = require('../utilities/convert_date_to_iso');
-    con.convert(app.db, 'tb_post').then(function (res) {
-        callback(null, res);
-    }).catch(function (err) {
-        callback(err, null);
-    })
 };
 
 
