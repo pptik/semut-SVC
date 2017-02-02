@@ -54,6 +54,7 @@ exports.store = function (call, callback) {
 
 
 exports.mapview = function (call, callback) {
+    /*
     userModel.checkSession(call['SessionID'], function (err, userID) {
         if(err)callback(err, null);
         else {
@@ -70,9 +71,14 @@ exports.mapview = function (call, callback) {
                 }).catch(function(err) {
                     callback(err, null);
                 });
-
             }else callback(null, messages.invalid_session);
         }
+    }); */
+    var update = require('../utilities/update_to_geo_location');
+    var app = require('../app');
+    update.createIndex(app.db.collection('tb_post'), function (err, res) {
+       if(err)callback(err, null);
+        else callback(null, res);
     });
 };
 

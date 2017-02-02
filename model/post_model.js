@@ -7,7 +7,7 @@ function findPostNearby(query) {
     var dateNow = '2014-05-21 09:12:46';
     console.log(new Date(dateNow));
     return new Promise(function (resolve, reject) {
-        postCollection.find({"Exp" : { $gte : new Date(dateNow)}}).toArray(function (err, posts) {
+        postCollection.find({"Exp" : { $gte : new Date(dateNow)}}).limit(query['Limit']).toArray(function (err, posts) {
             if(err)reject(err);
             else {
                 for(var i=0;i<posts.length;i++){
