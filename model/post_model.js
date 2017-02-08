@@ -49,6 +49,32 @@ function getPostType() {
     });
 }
 
+function insertPost(query) {
+    return new Promise(function (resolve, reject) {
+       var q = {
+           IDtype:parseInt(query['IDtype']),
+           IDsub:parseInt(query['IDsub']),
+           Type: query['Type'],
+           SubType: query['SubType'],
+           Times: new Date(query['Date']),
+           Description: query['Description'],
+           Latitude: parseFloat(query['Latitude']),
+           Longitude: parseFloat(query['Longitude']),
+           Exp: new Date(query['Expire']),
+           Status: 0,
+           location: {
+               type: 'Point',
+               coordinates: [parseFloat(query['Longitude']), parseFloat(query['Latitude'])]
+           },
+           PostedBy: query.user
+       };
+       postCollection.insertOne(q, function (err, res) {
+          if(err)reject(err);
+           else resolve(res.ops[0]);
+       });
+    });
+}
+
 function convertISODateToString(date) {
     var year = date.getFullYear();
     var month = date.getMonth()+1;
@@ -66,5 +92,6 @@ function convertISODateToString(date) {
 
 module.exports = {
     findPostNearby:findPostNearby,
-    getPostType:getPostType
+    getPostType:getPostType,
+    insertPost:insertPost
 };

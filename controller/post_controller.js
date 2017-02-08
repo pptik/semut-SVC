@@ -20,7 +20,26 @@ function getPostType(query) {
     });
 }
 
+function insertPost(query) {
+    return new Promise(function (resolve, reject) {
+        userModel.checkCompleteSession(query['SessionID'], function (err, details) {
+            if(err)reject(err);
+            else {
+                if(details){
+                    query.user = details;
+                    postModel.insertPost(query).then(function (resp) {
+                        resolve({success:true, message:"Berhasil menambahkan post", data:resp});
+                    }).catch(function (err) {
+                        reject(err);
+                    });
+                }else resolve(messages.invalid_session);
+            }
+        });
+    });
+}
+
 
 module.exports = {
-    getPostType:getPostType
+    getPostType:getPostType,
+    insertPost:insertPost
 };

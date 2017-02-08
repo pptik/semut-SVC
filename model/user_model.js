@@ -67,7 +67,26 @@ exports.checkSession = function(sessid, callback) {
             }
         }
     });
-}
+};
+
+
+exports.checkCompleteSession = function(sessid, callback) {
+    sessionCollection.find({ID: sessid}).toArray(function (err, results) {
+        if (err) {
+            console.log(err);
+            callback(err, null);
+        } else {
+            if(results[0]) {
+                userCollection.find({ID: results[0].UserID}).toArray(function (err, ress) {
+                   if(err)callback(err, null);
+                    else callback(null, {UserID: results[0].UserID, Name: ress[0].Name, Email: ress[0].Email});
+                });
+            }else {
+                callback(null, null);
+            }
+        }
+    });
+};
 
 
 exports.getProfileById = function(iduser, callback) {
