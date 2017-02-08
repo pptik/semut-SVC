@@ -9,7 +9,6 @@ function findPostNearby(query) {
     var dateNow = '2014-05-21 09:12:46';
     var latitude = parseFloat(query['Latitude']);
     var longitude = parseFloat(query['Longitude']);
-    console.log(new Date(dateNow));
     return new Promise(function (resolve, reject) {
         postCollection.find(
             {$and: [
@@ -25,7 +24,7 @@ function findPostNearby(query) {
                     }
                     }
                 },
-                {SubType:query['Type']}
+                {IDtype:query['Type']}
             ]})
             .limit(query['Limit']).toArray(function (err, posts) {
             if(err)reject(err);
@@ -70,7 +69,11 @@ function insertPost(query) {
        };
        postCollection.insertOne(q, function (err, res) {
           if(err)reject(err);
-           else resolve(res.ops[0]);
+           else {
+              res.ops[0].Exp = convertISODateToString(new Date(res.ops[0].Exp));
+              res.ops[0].Times = convertISODateToString(new Date(res.ops[0].Times));
+              resolve(res.ops[0]);
+           }
        });
     });
 }
@@ -79,7 +82,7 @@ function convertISODateToString(date) {
     var year = date.getFullYear();
     var month = date.getMonth()+1;
     var dt = date.getDate();
-    var time = date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
+    var time = addZero(date.getHours())+':'+addZero(date.getMinutes())+':'+addZero(date.getSeconds());
 
     if (dt < 10) {
         dt = '0' + dt;
@@ -89,6 +92,18 @@ function convertISODateToString(date) {
     }
     return year+'-' + month + '-'+dt+' '+time;
 }
+
+
+function addZero(number) {
+    number = parseInt(number);
+    var s = "";
+    if(number < 10){
+        s = '0'+number.toString();
+    }else s = number.toString();
+
+    return s;
+}
+
 
 module.exports = {
     findPostNearby:findPostNearby,
