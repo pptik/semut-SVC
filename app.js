@@ -99,11 +99,13 @@ database.connect(function (err, db) {
         var tracker = require('./routes/tracker');
         var friend = require('./routes/friend');
         var location = require('./routes/location');
+        var post = require('./routes/post');
         app.use('/', index);
         app.use('/api/users', users);
         app.use('/api/tracker', tracker);
         app.use('/api/friend', friend);
         app.use('/api/location', location);
+        app.use('/api/post', post);
         app.use(function(req, res, next) {
             var err = new Error('Not Found');
             err.status = 404;

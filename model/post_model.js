@@ -2,6 +2,7 @@ app = require('../app');
 db = app.db;
 
 var postCollection = db.collection('tb_post');
+var postTypeCollection = db.collection('tb_post_type');
 
 function findPostNearby(query) {
   //  var dateNow = new Date();
@@ -39,13 +40,14 @@ function findPostNearby(query) {
     });
 }
 
-
-
-function insertPost() {
-    
+function getPostType() {
+    return new Promise(function (resolve, reject) {
+       postTypeCollection.find({}).toArray(function (err, ress) {
+           if(err) reject(err);
+           else resolve(ress);
+       });
+    });
 }
-
-
 
 function convertISODateToString(date) {
     var year = date.getFullYear();
@@ -63,5 +65,6 @@ function convertISODateToString(date) {
 }
 
 module.exports = {
-    findPostNearby:findPostNearby
+    findPostNearby:findPostNearby,
+    getPostType:getPostType
 };
