@@ -106,6 +106,9 @@ database.connect(function (err, db) {
         app.use('/api/friend', friend);
         app.use('/api/location', location);
         app.use('/api/post', post);
+
+        var placeModel = require('./model/place_model');
+        placeModel.fixPlace();
         app.use(function(req, res, next) {
             var err = new Error('Not Found');
             err.status = 404;
