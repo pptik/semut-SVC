@@ -40,4 +40,19 @@ router.post('/mapview', function(req, res, next) {
 
 });
 
+router.post('/placeview', function(req, res, next) {
+    if(req.body['SessionID'] == null || req.body['Radius'] == null || req.body['Limit'] == null
+        || req.body['Item'] == null || req.body['Latitude'] == null || req.body['Longitude'] == null){
+        res.status(200).send({success: false, message: "Parameter tidak lengkap"});
+    }else {
+        locationController.placeView(req.body).then(function (result) {
+            res.status(200).send(result);
+        }).catch(function (err) {
+            console.log(err);
+            res.status(200).send({status: false, message:"Server tidak merespon"});
+        });
+    }
+
+});
+
 module.exports = router;

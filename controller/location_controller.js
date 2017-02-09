@@ -4,6 +4,7 @@ var userModel = require('../model/user_model');
 var messages = require('../setup/messages.json');
 var geoPlaceModel = require('../model/geo_place_model');
 var postModel = require('../model/post_model');
+var placeModel = require('../model/place_model');
 
 var valuesIndex = [
     {userLocation:0},
@@ -18,6 +19,51 @@ var valuesIndex = [
     {angkotLocation: 0}
 ];
 
+var valuesPlacesInex = [
+    {food:0},
+    {hotel:0},
+    {fashion:0},
+    {gasStation:0},
+    {school:0},
+    {university:0},
+    {hospital:0},
+    {bank:0},
+    {station:0},
+    {departmentStore:0},
+    {parkingArea:0}
+];
+
+
+exports.placeView = function (query) {
+  return new Promise(function (resolve, reject) {
+     userModel.checkSession(query['SessionID'], function (err, userID) {
+        if(err)reject(err);
+         else {
+             if(userID){
+                 checkPlaceItem(query['Item'].toString());
+                 var filter = getFilter(valuesPlacesInex);
+                 Promise.all([
+                    getFoodPlaces(filter.food, query),
+                     getHotelPlaces(filter.hotel, query),
+                     getFashionPlaces(filter.fashion, query),
+                     getGasStationPlaces(filter.gasStation, query),
+                     getSchoolPlaces(filter.school, query),
+                     getUniversityPlaces(filter.university, query),
+                     getHospitalPlaces(filter.hospital, query),
+                     getBankPlaces(filter.bank, query),
+                     getStationPlaces(filter.station, query),
+                     getDepartmentStorePlaces(filter.departmentStore, query),
+                     getParkingAreaPlaces(filter.parkingArea, query)
+                 ]).then(function (results) {
+                     resolve({success:true, message: "Berhasil memuat permintaan", results:results})
+                 }).catch(function (err) {
+                     reject(err);
+                 })
+             }else resolve(messages.invalid_session);
+        }
+     });
+  });
+};
 
 
 
@@ -71,7 +117,7 @@ exports.mapview = function (call, callback) {
                     getClosurePosts(filter.closurePost, call, userID),
                     getOtherPosts(filter.otherPost, call, userID)
                 ]).then(function(results) {
-                    callback(null, results);
+                    callback(null, {success: true, message: "berhasil memuat permintaan", results:results});
                 }).catch(function(err) {
                     callback(err, null);
                 });
@@ -83,7 +129,7 @@ exports.mapview = function (call, callback) {
 
 //---------------- function --------------------//
 
-// P R O M I S E S
+// M A P  P R O M I S E S
 
 function getUserLocation(state, query, userID) {
     return new Promise(function(resolve, reject) {
@@ -274,6 +320,251 @@ function getCCTVLocation(state, query, userID) {
 }
 
 
+// P L A C E S  P R O M I S E S
+
+
+function getFoodPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:1
+
+                }).then(function (places) {
+                resolve({Food:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({Food:[]});
+        }
+    });
+}
+
+
+function getHotelPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:2
+
+                }).then(function (places) {
+                resolve({Hotels:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({Hotels:[]});
+        }
+    });
+}
+
+function getFashionPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:3
+
+                }).then(function (places) {
+                resolve({Fashion:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({Fashion:[]});
+        }
+    });
+}
+
+function getGasStationPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:4
+
+                }).then(function (places) {
+                resolve({GasStation:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({GasStation:[]});
+        }
+    });
+}
+
+function getSchoolPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:5
+
+                }).then(function (places) {
+                resolve({School:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({School:[]});
+        }
+    });
+}
+
+function getUniversityPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:6
+
+                }).then(function (places) {
+                resolve({University:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({University:[]});
+        }
+    });
+}
+
+function getHospitalPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:7
+
+                }).then(function (places) {
+                resolve({Hospitals:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({Hospitals:[]});
+        }
+    });
+}
+
+function getBankPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:8
+
+                }).then(function (places) {
+                resolve({Bank:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({Bank:[]});
+        }
+    });
+}
+
+function getStationPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:9
+
+                }).then(function (places) {
+                resolve({Station:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({Station:[]});
+        }
+    });
+}
+
+function getDepartmentStorePlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:10
+
+                }).then(function (places) {
+                resolve({DepStores:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({DepStores:[]});
+        }
+    });
+}
+
+function getParkingAreaPlaces(state, query) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            placeModel.findNearbyPlace(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:11
+
+                }).then(function (places) {
+                resolve({ParkingArea:places})
+            }).catch(function (err) {
+                reject(err);
+            })
+        }else {
+            resolve({ParkingArea:[]});
+        }
+    });
+}
 
 //--------------------- regular
 
@@ -363,6 +654,57 @@ function checkItem(items) {
                 for(var propName in valuesIndex[i]) {
                     if(valuesIndex[i].hasOwnProperty(propName)) {
                         valuesIndex[i][propName] = true;
+                    }
+                }
+            }
+        }
+        return items;
+    }
+}
+
+function checkPlaceItem(items) {
+    items = items.split('');
+    for(var i = 0; i <items.length; i++){
+        items[i] = parseInt(items[i]);
+    }
+    if(items.length < valuesPlacesInex.length){
+        var _s = valuesPlacesInex.length - items.length;
+        for(var i = 0; i < _s; i++){
+            items.push(0);
+        }
+        for(var i =0; i < items.length; i++){
+            if(items[i] == 0){
+                items[i] = false;
+                for(var propName in valuesPlacesInex[i]) {
+                    if(valuesPlacesInex[i].hasOwnProperty(propName)) {
+                        valuesPlacesInex[i][propName] = false;
+                    }
+                }
+            }else {
+                items[i] = true;
+                for(var propName in valuesPlacesInex[i]) {
+                    if(valuesPlacesInex[i].hasOwnProperty(propName)) {
+                        valuesPlacesInex[i][propName] = true;
+                    }
+                }
+            }
+        }
+        return items;
+    }else if(items.length > valuesPlacesInex.length){
+        items.splice(valuesPlacesInex.length, items.length-valuesPlacesInex.length);
+        for(var i =0; i < items.length; i++){
+            if(items[i] == 0){
+                items[i] = false;
+                for(var propName in valuesPlacesInex[i]) {
+                    if(valuesPlacesInex[i].hasOwnProperty(propName)) {
+                        valuesPlacesInex[i][propName] = false;
+                    }
+                }
+            }else {
+                items[i] = true;
+                for(var propName in valuesPlacesInex[i]) {
+                    if(valuesPlacesInex[i].hasOwnProperty(propName)) {
+                        valuesPlacesInex[i][propName] = true;
                     }
                 }
             }
