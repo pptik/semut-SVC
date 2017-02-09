@@ -7,14 +7,15 @@ var postModel = require('../model/post_model');
 
 var valuesIndex = [
     {userLocation:0},
-    {userPost: 1},
-    {cctvPost: 2},
-    {policePost: 3},
-    {accidentPost: 4},
-    {trafficPost: 5},
-    {otherPost: 6},
-    {commuterTrain: 7},
-    {angkotLocation: 8}
+    {cctvPost: 0},
+    {policePost: 0},
+    {accidentPost: 0},
+    {trafficPost: 0},
+    {disasterPost: 0},
+    {closurePost: 0},
+    {otherPost: 0},
+    {commuterTrain: 0},
+    {angkotLocation: 0}
 ];
 
 
@@ -62,10 +63,13 @@ exports.mapview = function (call, callback) {
                 var filter = getFilter(valuesIndex);
                 Promise.all([
                     getUserLocation(filter.userLocation, call, userID),
-                    getPolicePosts(filter.userPost, call, userID),
+                    getCCTVLocation(filter.cctvPost, call, userID),
+                    getPolicePosts(filter.policePost, call, userID),
                     getAccidents(filter.accidentPost, call, userID),
-                    getCCTVLocation(filter.cctvPost, call, userID)
-
+                    getTrafficPosts(filter.trafficPost, call, userID),
+                    getDisasterPosts(filter.disasterPost, call, userID),
+                    getClosurePosts(filter.closurePost, call, userID),
+                    getOtherPosts(filter.otherPost, call, userID)
                 ]).then(function(results) {
                     callback(null, results);
                 }).catch(function(err) {
@@ -123,6 +127,101 @@ function getPolicePosts(state, query, userID) {
         }
     });
 }
+
+
+function getTrafficPosts(state, query, userID) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            postModel.findPostNearby(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    UserID: userID,
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:1
+                }).then(function (posts) {
+                resolve({Traffics:posts});
+            }).catch(function (err) {
+                reject(err);
+            });
+        }else {
+            resolve({Traffics:[]});
+        }
+    });
+}
+
+
+
+function getDisasterPosts(state, query, userID) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            postModel.findPostNearby(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    UserID: userID,
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:4
+                }).then(function (posts) {
+                resolve({Disasters:posts});
+            }).catch(function (err) {
+                reject(err);
+            });
+        }else {
+            resolve({Disasters:[]});
+        }
+    });
+}
+
+
+function getClosurePosts(state, query, userID) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            postModel.findPostNearby(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    UserID: userID,
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:5
+                }).then(function (posts) {
+                resolve({Closures:posts});
+            }).catch(function (err) {
+                reject(err);
+            });
+        }else {
+            resolve({Closures:[]});
+        }
+    });
+}
+
+
+
+function getOtherPosts(state, query, userID) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            postModel.findPostNearby(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    UserID: userID,
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit']),
+                    Type:6
+                }).then(function (posts) {
+                resolve({Other:posts});
+            }).catch(function (err) {
+                reject(err);
+            });
+        }else {
+            resolve({Other:[]});
+        }
+    });
+}
+
 
 
 function getAccidents(state, query, userID) {
