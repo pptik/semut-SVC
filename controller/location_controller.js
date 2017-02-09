@@ -33,7 +33,6 @@ var valuesPlacesInex = [
     {parkingArea:0}
 ];
 
-
 exports.placeView = function (query) {
   return new Promise(function (resolve, reject) {
      userModel.checkSession(query['SessionID'], function (err, userID) {
@@ -64,9 +63,6 @@ exports.placeView = function (query) {
      });
   });
 };
-
-
-
 
 exports.store = function (call, callback) {
     userModel.checkSession(call['SessionID'], function (err, userID) {
@@ -99,7 +95,6 @@ exports.store = function (call, callback) {
     });
 };
 
-
 exports.mapview = function (call, callback) {
     userModel.checkSession(call['SessionID'], function (err, userID) {
         if(err)callback(err, null);
@@ -125,7 +120,6 @@ exports.mapview = function (call, callback) {
         }
     });
 };
-
 
 //---------------- function --------------------//
 
@@ -174,7 +168,6 @@ function getPolicePosts(state, query, userID) {
     });
 }
 
-
 function getTrafficPosts(state, query, userID) {
     return new Promise(function(resolve, reject) {
         if(state == true){
@@ -196,8 +189,6 @@ function getTrafficPosts(state, query, userID) {
         }
     });
 }
-
-
 
 function getDisasterPosts(state, query, userID) {
     return new Promise(function(resolve, reject) {
@@ -221,7 +212,6 @@ function getDisasterPosts(state, query, userID) {
     });
 }
 
-
 function getClosurePosts(state, query, userID) {
     return new Promise(function(resolve, reject) {
         if(state == true){
@@ -244,8 +234,6 @@ function getClosurePosts(state, query, userID) {
     });
 }
 
-
-
 function getOtherPosts(state, query, userID) {
     return new Promise(function(resolve, reject) {
         if(state == true){
@@ -267,8 +255,6 @@ function getOtherPosts(state, query, userID) {
         }
     });
 }
-
-
 
 function getAccidents(state, query, userID) {
     return new Promise(function(resolve, reject) {
@@ -319,9 +305,7 @@ function getCCTVLocation(state, query, userID) {
     });
 }
 
-
 // P L A C E S  P R O M I S E S
-
 
 function getFoodPlaces(state, query) {
     return new Promise(function(resolve, reject) {
@@ -344,7 +328,6 @@ function getFoodPlaces(state, query) {
         }
     });
 }
-
 
 function getHotelPlaces(state, query) {
     return new Promise(function(resolve, reject) {
@@ -712,8 +695,3 @@ function checkPlaceItem(items) {
         return items;
     }
 }
-
-
-
-
-
