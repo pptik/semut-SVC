@@ -119,26 +119,31 @@ function iterateUser(items, callback) {
         items[i].index = i;
     }
     var arrResult = [];
-    items.forEach(function(index){
-        userModel.getProfileById(index['UserID'], function (err, profile) {
-            if(err)callback(err, null);
-            else {
-                delete index['_id'];
-                delete index['UserID'];
-                delete index['flag'];
-                delete index['StatusOnline'];
-                delete index['location'];
-                profile.LastLocation = index;
-                arrResult.push(profile);
-                if(index['index'] == items.length-1){
-                    for(var i = 0; i< arrResult.length; i++){
-                        delete arrResult[i].LastLocation.index;
+    var maxCount = (items.length > 0) ? items.length-1 : 0;
+    if(items.length > 0) {
+        items.forEach(function (index) {
+            userModel.getProfileById(index['UserID'], function (err, profile) {
+                if (err)callback(err, null);
+                else {
+                    delete index['_id'];
+                    delete index['UserID'];
+                    delete index['flag'];
+                    delete index['StatusOnline'];
+                    delete index['location'];
+                    profile.LastLocation = index;
+                    arrResult.push(profile);
+                    if (index['index'] == maxCount) {
+                        for (var i = 0; i < arrResult.length; i++) {
+                            delete arrResult[i].LastLocation.index;
+                        }
+                        callback(null, arrResult);
                     }
-                    callback(null, arrResult);
                 }
-            }
+            });
         });
-    });
+    }else {
+        callback(null, arrResult);
+    }
 }
 
 function iterateFriendInfo(items, UserID, callback) {
@@ -146,25 +151,28 @@ function iterateFriendInfo(items, UserID, callback) {
         items[i].index = i;
     }
     var arrResult = [];
-    items.forEach(function(index){
-        userModel.getRelationStatus(UserID, index['ID'], function (err, profile) {
-            if(err)callback(err, null);
-            else {
-                if(profile == false) index.Friend = false;
+    var maxCount = (items.length > 0) ? items.length-1 : 0;
+    if(items.length > 0) {
+        items.forEach(function (index) {
+            userModel.getRelationStatus(UserID, index['ID'], function (err, profile) {
+                if (err)callback(err, null);
                 else {
-                    index.Friend = true;
-                    index.Relation = profile;
-                }
-                arrResult.push(index);
-                if(index['index'] == items.length-1){
-                    for(var i = 0; i< arrResult.length; i++){
-                        delete arrResult[i].index;
+                    if (profile == false) index.Friend = false;
+                    else {
+                        index.Friend = true;
+                        index.Relation = profile;
                     }
-                    callback(null, arrResult);
+                    arrResult.push(index);
+                    if (index['index'] == maxCount) {
+                        for (var i = 0; i < arrResult.length; i++) {
+                            delete arrResult[i].index;
+                        }
+                        callback(null, arrResult);
+                    }
                 }
-            }
+            });
         });
-    });
+    }else {callback(null, arrResult);}
 }
 
 module.exports = {

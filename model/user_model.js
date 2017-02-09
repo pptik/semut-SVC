@@ -247,43 +247,46 @@ exports.searchUser = function(key, userID, callback) {
             items[i].index = i;
         }
         var arrResult = [];
-        items.forEach(function(index){
-            getRelationStatus(userid, index['ID'], function (err, result) {
-                if(err){
-                    callback(err, null);
-                }else {
-                    if(result == false){
-                        index['Friend'] = false;
-                    }else {
-                        index['Friend'] = true;
-                        index['RelationInfo'] = result;
+        var maxCount = (items.length > 0) ? items.length-1 : 0;
+        if(items.length > 0) {
+            items.forEach(function (index) {
+                getRelationStatus(userid, index['ID'], function (err, result) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        if (result == false) {
+                            index['Friend'] = false;
+                        } else {
+                            index['Friend'] = true;
+                            index['RelationInfo'] = result;
+                        }
                     }
-                }
-                arrResult.push(index);
-                if(index['index'] == items.length-1){
-                    for(var i = 0; i< arrResult.length; i++){
-                        delete arrResult[i]['index'];
-                        delete arrResult[i]['Password'];
-                        delete arrResult[i]['_id'];
-                        delete arrResult[i]['flag'];
-                        delete arrResult[i]['foto'];
-                        delete arrResult[i]['PushID'];
-                        delete arrResult[i]['Path_foto'];
-                        delete arrResult[i]['Nama_foto'];
-                        delete arrResult[i]['Path_ktp'];
-                        delete arrResult[i]['Nama_ktp'];
-                        delete arrResult[i]['facebookID'];
-                        delete arrResult[i]['ID_role'];
-                        delete arrResult[i]['ID_ktp'];
-                        delete arrResult[i]['Plat_motor'];
-                        delete arrResult[i]['VerifiedNumber'];
-                        delete arrResult[i]['Barcode'];
-                        delete arrResult[i]['Status_online'];
+                    arrResult.push(index);
+                    if (index['index'] == maxCount) {
+                        for (var i = 0; i < arrResult.length; i++) {
+                            delete arrResult[i]['index'];
+                            delete arrResult[i]['Password'];
+                            delete arrResult[i]['_id'];
+                            delete arrResult[i]['flag'];
+                            delete arrResult[i]['foto'];
+                            delete arrResult[i]['PushID'];
+                            delete arrResult[i]['Path_foto'];
+                            delete arrResult[i]['Nama_foto'];
+                            delete arrResult[i]['Path_ktp'];
+                            delete arrResult[i]['Nama_ktp'];
+                            delete arrResult[i]['facebookID'];
+                            delete arrResult[i]['ID_role'];
+                            delete arrResult[i]['ID_ktp'];
+                            delete arrResult[i]['Plat_motor'];
+                            delete arrResult[i]['VerifiedNumber'];
+                            delete arrResult[i]['Barcode'];
+                            delete arrResult[i]['Status_online'];
+                        }
+                        callback(null, arrResult);
                     }
-                    callback(null, arrResult);
-                }
-            });
+                });
 
-        });
+            });
+        }else {callback(null, [])}
     }
 };

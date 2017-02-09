@@ -182,27 +182,30 @@ function iterateCCTV(items) {
     for(var i = 0; i< items.length; i++){
         items[i].index = i;
     }
+    var maxCount = (items.length > 0) ? items.length-1 : 0;
     return new Promise(function(resolve, reject) {
         var arrResult = [];
-        items.forEach(function(index){
-            geoPlaceModel.getCity(index['CityID']).then(function (city) {
-                if(index['index'] == items.length-1){
-                    delete index['index'];
-                    delete index['CityID'];
-                    index['City'] = city['Name'];
-                    arrResult.push(index);
-                    resolve(arrResult);
-                }else {
-                    delete index['index'];
-                    delete index['CityID'];
-                    index['City'] = city['Name'];
-                    arrResult.push(index);
-                    resolve(arrResult);
-                }
-            }).catch(function(err) {
-                reject(err);
+        if(items.length > 0) {
+            items.forEach(function (index) {
+                geoPlaceModel.getCity(index['CityID']).then(function (city) {
+                    if (index['index'] == maxCount) {
+                        delete index['index'];
+                        delete index['CityID'];
+                        index['City'] = city['Name'];
+                        arrResult.push(index);
+                        resolve(arrResult);
+                    } else {
+                        delete index['index'];
+                        delete index['CityID'];
+                        index['City'] = city['Name'];
+                        arrResult.push(index);
+                        resolve(arrResult);
+                    }
+                }).catch(function (err) {
+                    reject(err);
+                });
             });
-        });
+        }else {resolve([])}
     });
 
 }
