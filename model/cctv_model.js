@@ -22,9 +22,18 @@ function getCCTVNearby(query, callback) {
     ).limit(query['Limit']).toArray(function (err, cctvs) {
         if(err)callback(err, null);
         else {
-            callback(null, cctvs);
+            callback(null, fixStreamUrl(cctvs));
         }
     });
+}
+
+
+function fixStreamUrl(items) {
+    for(var i =0; i < items.length; i++){
+        items[i]['urlVideo'] = items[i]['urlVideo']+items[i]['ItemID'];
+        items[i]['urlImage'] = items[i]['urlImage']+items[i]['ItemID'];
+    }
+    return items;
 }
 
 

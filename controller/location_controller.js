@@ -306,7 +306,6 @@ function iterateCCTV(items) {
             });
         }else {resolve([])}
     });
-
 }
 
 function getFilter(arr) {
