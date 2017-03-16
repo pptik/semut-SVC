@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var locationController = require('../controller/location_controller');
+var configs = require('../setup/configs.json');
 
 
 router.post('/store', function(req, res, next) {
@@ -54,5 +55,15 @@ router.post('/placeview', function(req, res, next) {
     }
 
 });
+
+function checkSignature(sig) {
+    var state = false;
+    for(var i = 0; i < configs.signatures.length; i++){
+        if(configs.signatures[i] == sig){
+            state = true;
+        }
+    }
+    return state;
+}
 
 module.exports = router;
