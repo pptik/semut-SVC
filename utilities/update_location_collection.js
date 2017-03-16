@@ -7,7 +7,7 @@ function test(collection, callback) {
             }
             locs.forEach(function(index){
                 console.log(index['_id']);
-                collection.updateOne({_id: index['_id']},{ $set: { username: "user"+index['index']}}, function(err, result) {
+                collection.updateOne({_id: index['_id']},{ $set: { preferences: {mapitem: "000000", Radius: 0, Limit: 0}}}, function(err, result) {
                     if(err){
                         callback(err, null);
                     }else {

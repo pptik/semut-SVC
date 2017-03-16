@@ -75,6 +75,8 @@ exports.store = function (call, callback) {
                    'Altitude': parseFloat(call['Altitude']),
                    'Latitude': parseFloat(call['Latitude']),
                    'Longitude': parseFloat(call['Longitude']),
+                   'mapitem' : call['mapitem'],
+                   'StatusOnline' : parseInt(call['StatusOnline']),
                    'Speed': parseFloat(call['Speed']),
                    'location':{
                        'type': 'Point',

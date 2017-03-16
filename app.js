@@ -37,13 +37,6 @@ database.connect(function (err, db) {
     if(err){
         console.log(err);
     } else {
-        var collection = db.collection('tb_user');
-        var test = require('./utilities/update_location_collection');
-        test.test(collection, function (err, res) {
-           if(err)console.log(err);
-            else console.log(res);
-        });
-
         app.use(function(err, req, res, next) {
             res.locals.message = err.message;
             res.locals.error = req.app.get('env') === 'development' ? err : {};
