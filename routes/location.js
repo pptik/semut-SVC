@@ -8,11 +8,13 @@ router.post('/store', function(req, res, next) {
     console.log(req.body);
     if(req.body['Date'] == null || req.body['Altitude'] == null ||
         req.body['SessionID'] == null || req.body['Latitude'] == null || req.body['Longitude'] == null ||
-        req.body['Speed'] == null || req.body['mapitem'] == null || req.body['StatusOnline'] == null){
+        req.body['Speed'] == null || req.body['mapitem'] == null || req.body['StatusOnline'] == null ||
+        req.body['Radius'] == null || req.body['Limit'] == null){
         res.status(200).send({success: false, message: "Parameter tidak lengkap"});
     }else {
         locationController.store(req.body, function (err, result) {
             if(err){
+                console.log(err);
                 res.status(200).send({status: false, message:"Server tidak merespon"});
             }else {
                 res.status(200).send(result);
@@ -25,7 +27,6 @@ router.post('/store', function(req, res, next) {
 
 
 router.post('/mapview', function(req, res, next) {
-
     if(req.body['SessionID'] == null || req.body['Radius'] == null || req.body['Limit'] == null
         || req.body['Item'] == null || req.body['Latitude'] == null || req.body['Longitude'] == null){
         res.status(200).send({success: false, message: "Parameter tidak lengkap"});
@@ -39,7 +40,22 @@ router.post('/mapview', function(req, res, next) {
             }
         })
     }
+});
 
+
+router.post('/mapviewsimple', function(req, res, next) {
+    if(req.body['SessionID'] == null){
+        res.status(200).send({success: false, message: "Parameter tidak lengkap"});
+    }else {
+        locationController.mapview(req.body, function (err, result) {
+            if(err){
+                console.log(err);
+                res.status(200).send({status: false, message:"Server tidak merespon"});
+            }else {
+                res.status(200).send(result);
+            }
+        })
+    }
 });
 
 router.post('/placeview', function(req, res, next) {

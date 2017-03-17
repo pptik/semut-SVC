@@ -81,6 +81,13 @@ function insertToHistory(query, callback) {
 }
 
 
+function getUserLocation(userID, callback) {
+    locationCollection.find({UserID: userID}).toArray(function (err, users) {
+       if(err) callback(err, null);
+        else callback(null,users[0]);
+    });
+}
+
 function getUserNearby(query, callback) {
     var latitude = parseFloat(query['Latitude']);
     var longitude = parseFloat(query['Longitude']);
@@ -179,5 +186,6 @@ module.exports = {
     insertOrUpdate:insertOrUpdate,
     insertToHistory:insertToHistory,
     getUserNearby:getUserNearby,
+    getUserLocation:getUserLocation,
     test:test
 };

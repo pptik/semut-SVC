@@ -75,7 +75,11 @@ exports.store = function (call, callback) {
                    'Altitude': parseFloat(call['Altitude']),
                    'Latitude': parseFloat(call['Latitude']),
                    'Longitude': parseFloat(call['Longitude']),
-                   'mapitem' : call['mapitem'],
+                   'preferences' : {
+                       'mapitem': call['mapitem'],
+                       'Radius' : parseInt(call['Radius']),
+                       'Limit' : parseInt(call['Limit'])
+                   },
                    'StatusOnline' : parseInt(call['StatusOnline']),
                    'Speed': parseFloat(call['Speed']),
                    'location':{
@@ -88,7 +92,17 @@ exports.store = function (call, callback) {
                   else{
                       locationModel.insertToHistory(query, function (err, res) {
                          if(err)callback(err, null);
-                         else  callback(null, {success: true, message: "Sukses insert lokasi", location: query});
+                         else  {
+                             if(parseInt(call['StatusOnline']) == 1){
+                                 mapviewsimple(userID, call, function (err, results) {
+
+                                    if(err)callback(err, null);
+                                     else callback(null, results);
+                                 });
+                             }else {
+                                 callback(null, {success: true, message: "Sukses insert lokasi", location: query});
+                             }
+                         }
                       });
                   }
                });
@@ -96,6 +110,47 @@ exports.store = function (call, callback) {
        }
     });
 };
+
+
+function mapviewsimple(userID, call, callback) {
+ //   userModel.checkSession(call['SessionID'], function (err, userID) {
+ //       if(err)callback(err, null);
+ //       else {
+ //           if(userID){
+    //console.log(call);
+                locationModel.getUserLocation(userID, function (err, response) {
+                    if(err) {
+                        console.log("shit");
+                        callback(err, null);
+                    }
+                    else {
+                        var pref = response['preferences'];
+                        call['Latitude'] = response['Latitude'];
+                        call['Longitude'] = response['Longitude'];
+                        call['Item'] = pref['mapitem'];
+                        call['Radius'] = pref['Radius'];
+                        call['Limit'] = pref['Limit'];
+
+                        checkItem(call['Item'].toString());
+                        var filter = getFilter(valuesIndex);
+                        Promise.all([
+                            getUserLocation(filter.userLocation, call, userID),
+                            getCCTVLocation(filter.cctvPost, call, userID),
+                            getPolicePosts(filter.policePost, call, userID),
+                            getAccidents(filter.accidentPost, call, userID),
+                            getTrafficPosts(filter.trafficPost, call, userID),
+                            getDisasterPosts(filter.disasterPost, call, userID),
+                            getClosurePosts(filter.closurePost, call, userID),
+                            getOtherPosts(filter.otherPost, call, userID)
+                        ]).then(function(results) {
+                            callback(null, {success: true, message: "berhasil memuat permintaan", results:results});
+                        }).catch(function(err) {
+                            callback(err, null);
+                        });
+                    }
+                });
+};
+
 
 exports.mapview = function (call, callback) {
     userModel.checkSession(call['SessionID'], function (err, userID) {
