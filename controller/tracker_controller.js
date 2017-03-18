@@ -46,3 +46,21 @@ exports.getalltracker = function (call, callback) {
         }
     });
 };
+
+
+exports.edittracker = function (query) {
+  return new Promise(function (resolve, reject) {
+      userModel.checkSession(query['SessionID'], function (err, userID) {
+          if (err) callback(err, null);
+          else {
+              if (userID) {
+                   trackerModel.editTracker(query).then(function (result) {
+                        resolve({success: true, message: "Tracker berhasil diupdate"});
+                   }).catch(function (err) {
+                        reject(err);
+                   })
+              }else callback(null, messages.invalid_session);
+          }
+      });
+  });
+};

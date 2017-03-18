@@ -29,6 +29,18 @@ function insertTracker(query, callback) {
     });
 }
 
+function editTracker(query) {
+    console.log(query);
+    return new Promise(function (resolve, reject) {
+        trackerCollection.updateOne({Mac:query['Mac']}, {$set:{Keterangan: query['Keterangan']}}, function (err, ok) {
+            if(err) reject(err);
+            else {
+                resolve(ok);
+            }
+        });
+    });
+}
+
 function getAllTracker(callback) {
     trackerCollection.find({}).toArray(function (err, items) {
         if(err){
@@ -42,5 +54,6 @@ function getAllTracker(callback) {
 module.exports = {
     findTrackerDevice:findTrackerDevice,
     insertTracker:insertTracker,
-    getAllTracker:getAllTracker
+    getAllTracker:getAllTracker,
+    editTracker:editTracker
 };

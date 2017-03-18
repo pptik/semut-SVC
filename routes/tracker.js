@@ -43,4 +43,17 @@ router.post('/getalltracker', function (req, res, next) {
    }
 });
 
+router.post('/editracker', function (req, res, next) {
+    if(req.body['SessionID'] == null || req.body['Keterangan'] == null || req.body['Mac'] == null){
+        res.status(200).send({success:false, message:"Parameter tidak lengkap"});
+    }else {
+        trackerController.edittracker(req.body).then(function (result) {
+            res.status(200).send(result);
+        }).catch(function (err) {
+            console.log(err);
+            res.status(200).send({status: false, message:"Server tidak merespon"});
+        })
+    }
+});
+
 module.exports = router;

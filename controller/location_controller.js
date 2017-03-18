@@ -113,14 +113,8 @@ exports.store = function (call, callback) {
 
 
 function mapviewsimple(userID, call, callback) {
- //   userModel.checkSession(call['SessionID'], function (err, userID) {
- //       if(err)callback(err, null);
- //       else {
- //           if(userID){
-    //console.log(call);
                 locationModel.getUserLocation(userID, function (err, response) {
                     if(err) {
-                        console.log("shit");
                         callback(err, null);
                     }
                     else {
@@ -132,6 +126,7 @@ function mapviewsimple(userID, call, callback) {
                         call['Limit'] = pref['Limit'];
 
                         checkItem(call['Item'].toString());
+                        console.log(valuesIndex);
                         var filter = getFilter(valuesIndex);
                         Promise.all([
                             getUserLocation(filter.userLocation, call, userID),
