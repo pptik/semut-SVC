@@ -30,7 +30,6 @@ function insertTracker(query, callback) {
 }
 
 function editTracker(query) {
-    console.log(query);
     return new Promise(function (resolve, reject) {
         trackerCollection.updateOne({Mac:query['Mac']}, {$set:{Keterangan: query['Keterangan']}}, function (err, ok) {
             if(err) reject(err);
@@ -51,9 +50,33 @@ function getAllTracker(callback) {
     });
 }
 
+function getTrackerNearby(query, callback) {
+    var latitude = parseFloat(query['Latitude']);
+    var longitude = parseFloat(query['Longitude']);
+    trackerCollection.find(
+        {
+            location:
+            { $near :
+            {
+                $geometry: { type: "Point",  coordinates: [ longitude, latitude ] },
+                $minDistance: 1,
+                $maxDistance: query['Radius']
+            }
+            }
+        }
+    ).limit(query['Limit']).toArray(function (err, trackers) {
+        if(err)callback(err, null);
+        else {
+            callback(null, trackers);
+            console.log(trackers);
+        }
+    });
+}
+
 module.exports = {
     findTrackerDevice:findTrackerDevice,
     insertTracker:insertTracker,
     getAllTracker:getAllTracker,
-    editTracker:editTracker
+    editTracker:editTracker,
+    getTrackerNearby:getTrackerNearby
 };

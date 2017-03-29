@@ -44,6 +44,9 @@ database.connect(function (err, db) {
             res.render('error');
         });
 
+        //---- test
+
+
         var port = normalizePort(process.env.PORT || '3030');
         app.set('port', port);
         var server = http.createServer(app);

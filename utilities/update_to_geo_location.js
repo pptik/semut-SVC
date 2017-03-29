@@ -6,7 +6,9 @@ function test(collection, callback) {
                 locs[i].index = i;
             }
             locs.forEach(function(index){
-                collection.updateOne({_id: index['_id']},{ $set: { location:{type: 'Point', coordinates:[index['Longitude'], index['Latitude']]}}}, function(err, result) {
+                console.log(index);
+                console.log("edit : "+index['_id']);
+                collection.updateOne({_id: index['_id']},{ $set: { location:{type: 'Point', coordinates:[index['Data'][1], index['Data'][0]]}}}, function(err, result) {
                     if(err){
                         callback(err, null);
                     }else {

@@ -5,6 +5,7 @@ var messages = require('../setup/messages.json');
 var geoPlaceModel = require('../model/geo_place_model');
 var postModel = require('../model/post_model');
 var placeModel = require('../model/place_model');
+var trackerModel = require('../model/tracker_model');
 
 var valuesIndex = [
     {userLocation:0},
@@ -52,7 +53,7 @@ exports.placeView = function (query) {
                      getBankPlaces(filter.bank, query),
                      getStationPlaces(filter.station, query),
                      getDepartmentStorePlaces(filter.departmentStore, query),
-                     getParkingAreaPlaces(filter.parkingArea, query)
+                     getParkingAreaPlaces(filter.parkingArea, query),
                  ]).then(function (results) {
                      resolve({success:true, message: "Berhasil memuat permintaan", results:results})
                  }).catch(function (err) {
@@ -111,42 +112,6 @@ exports.store = function (call, callback) {
     });
 };
 
-
-function mapviewsimple(userID, call, callback) {
-                locationModel.getUserLocation(userID, function (err, response) {
-                    if(err) {
-                        callback(err, null);
-                    }
-                    else {
-                        var pref = response['preferences'];
-                        call['Latitude'] = response['Latitude'];
-                        call['Longitude'] = response['Longitude'];
-                        call['Item'] = pref['mapitem'];
-                        call['Radius'] = pref['Radius'];
-                        call['Limit'] = pref['Limit'];
-
-                        checkItem(call['Item'].toString());
-                        console.log(valuesIndex);
-                        var filter = getFilter(valuesIndex);
-                        Promise.all([
-                            getUserLocation(filter.userLocation, call, userID),
-                            getCCTVLocation(filter.cctvPost, call, userID),
-                            getPolicePosts(filter.policePost, call, userID),
-                            getAccidents(filter.accidentPost, call, userID),
-                            getTrafficPosts(filter.trafficPost, call, userID),
-                            getDisasterPosts(filter.disasterPost, call, userID),
-                            getClosurePosts(filter.closurePost, call, userID),
-                            getOtherPosts(filter.otherPost, call, userID)
-                        ]).then(function(results) {
-                            callback(null, {success: true, message: "berhasil memuat permintaan", results:results});
-                        }).catch(function(err) {
-                            callback(err, null);
-                        });
-                    }
-                });
-};
-
-
 exports.mapview = function (call, callback) {
     userModel.checkSession(call['SessionID'], function (err, userID) {
         if(err)callback(err, null);
@@ -162,7 +127,8 @@ exports.mapview = function (call, callback) {
                     getTrafficPosts(filter.trafficPost, call, userID),
                     getDisasterPosts(filter.disasterPost, call, userID),
                     getClosurePosts(filter.closurePost, call, userID),
-                    getOtherPosts(filter.otherPost, call, userID)
+                    getOtherPosts(filter.otherPost, call, userID),
+                    getTrackerLocation(filter.angkotLocation, call, userID)
                 ]).then(function(results) {
                     callback(null, {success: true, message: "berhasil memuat permintaan", results:results});
                 }).catch(function(err) {
@@ -353,6 +319,30 @@ function getCCTVLocation(state, query, userID) {
                 });
         }else {
             resolve({CCTV:[]});
+        }
+    });
+}
+
+
+function getTrackerLocation(state, query, userID) {
+    return new Promise(function(resolve, reject) {
+        if(state == true){
+            trackerModel.getTrackerNearby(
+                {
+                    Latitude: parseFloat(query['Latitude']),
+                    Longitude: parseFloat(query['Longitude']),
+                    UserID: userID,
+                    Radius: parseFloat(query['Radius']),
+                    Limit: parseInt(query['Limit'])
+
+                }, function (err, results) {
+                    if(results) {
+                        resolve({Trackers:results});
+                    }
+                    else reject(err);
+                });
+        }else {
+            resolve({Trackers:[]});
         }
     });
 }
