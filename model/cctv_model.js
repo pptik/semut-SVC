@@ -33,7 +33,6 @@ function getAllCctv() {
     return new Promise(function (resolve, reject) {
         cityCollection.find({}).toArray(function (err, cities) {
            if(err)reject(err);
-           // else resolve(cities);
             else {
                 if(cities.length > 0){
                     cities.forEach(function (index) {

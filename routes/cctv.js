@@ -8,7 +8,7 @@ router.post('/getall', function(req, res, next) {
     var query = req.body;
     if(query['SessionID'] == null) res.status(200).send({success: false, message: "Parameter tidak lengkap"});
     else cctvControllers.getallcctv(query).then(function (result) {
-        res.status(200).send(result);
+        res.status(200).send({success:true, message: "Berhasil memuat permintaan", data:result});
     }).catch(function (err) {
 
     });
