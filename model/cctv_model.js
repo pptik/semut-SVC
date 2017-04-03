@@ -3,6 +3,7 @@ db = app.db;
 
 
 var cctvCollection = db.collection('tb_cctv');
+var cityCollection = db.collection('tb_city');
 
 
 function getCCTVNearby(query, callback) {
@@ -28,6 +29,41 @@ function getCCTVNearby(query, callback) {
 }
 
 
+function getAllCctv() {
+    return new Promise(function (resolve, reject) {
+        cityCollection.find({}).toArray(function (err, cities) {
+           if(err)reject(err);
+           // else resolve(cities);
+            else {
+                if(cities.length > 0){
+                    cities.forEach(function (index) {
+                        getCctvList(index['ID']).then(function (lists) {
+                            index['cctv'] = lists;
+                            if(cities.indexOf(index) == cities.length-1){
+                                resolve(cities);
+                            }
+                        }).catch(function (err) {
+                           reject(err);
+                        });
+                    });
+                }else resolve(cities);
+           }
+        });
+    });
+}
+
+function getCctvList(cityId) {
+    return new Promise(function (resolve, reject) {
+       cctvCollection.find({CityID: cityId}).toArray(function (err, result) {
+          if(err)reject(err);
+           else {
+               resolve(fixStreamUrl(result));
+           }
+       });
+    });
+}
+
+
 function fixStreamUrl(items) {
     for(var i =0; i < items.length; i++){
         items[i]['urlVideo'] = items[i]['urlVideo']+items[i]['ItemID'];
@@ -38,5 +74,6 @@ function fixStreamUrl(items) {
 
 
 module.exports = {
-    getCCTVNearby:getCCTVNearby
+    getCCTVNearby:getCCTVNearby,
+    getAllCctv:getAllCctv
 };

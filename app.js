@@ -104,6 +104,7 @@ database.connect(function (err, db) {
         var location = require('./routes/location');
         var post = require('./routes/post');
         var emergency = require('./routes/emergency');
+        var cctv = require('./routes/cctv');
         app.use('/', index);
         app.use('/api/users', users);
         app.use('/api/tracker', tracker);
@@ -111,6 +112,7 @@ database.connect(function (err, db) {
         app.use('/api/location', location);
         app.use('/api/post', post);
         app.use('/api/emergency', emergency);
+        app.use('/api/cctv', cctv);
         app.use(function(req, res, next) {
             var err = new Error('Not Found');
             err.status = 404;
