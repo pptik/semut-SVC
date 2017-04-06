@@ -18,6 +18,28 @@ exports.findEmail = function (email, callback) {
   });
 };
 
+exports.findPhoneNumber = function (phoneNumber, callback) {
+    userCollection.find({PhoneNumber :phoneNumber}).toArray(function (err, results) {
+        if(err){
+            callback(err, null);
+        }else {
+            console.log(results);
+            callback(null, results);
+        }
+    });
+};
+
+
+exports.findUserName = function (username, callback) {
+    userCollection.find({username :username}).toArray(function (err, results) {
+        if(err){
+            callback(err, null);
+        }else {
+            callback(null, results);
+        }
+    });
+};
+
 
 
 exports.initSession = function (userID, callback) {
@@ -128,6 +150,7 @@ exports.insertUser = function (query, callback) {
     var birthday = query.Birthday;
     var password = query.Password;
     var name = query.Name;
+    var username = query.Username;
     autoIncrement.getNextSequence(db, 'tb_user', 'ID', function (err, autoIndex){
         if(err){
             callback(err, null);
@@ -135,6 +158,7 @@ exports.insertUser = function (query, callback) {
             var userQuery = {
                 "ID" : autoIndex,
                 "Name" : name,
+                "username" : username,
                 "Email" : email,
                 "CountryCode" : 62,
                 "PhoneNumber" : phonenumber,

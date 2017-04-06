@@ -43,20 +43,34 @@ exports.login = function (call, callback) {
 };
 
 exports.signup = function (call, callback) {
-  userModel.findEmail(call['Email'], function (err, emails) {
-     if(err){
-         callback(err, null);
-     } else {
-         if(emails[0]){
-             callback(null, messages.email_already_use);
-         }else {
-             userModel.insertUser(call, function (err, user) {
-                if(err){
-                    callback(err, null);
-                } else {
-                    callback(null, messages.account_created);
-                }
-             });
+  userModel.findUserName(call['Username'], function (err, username) {
+     if(err)callback(err, null);
+      else {
+         if(username[0])callback(null, messages.username_already_use);
+         else {
+             if(call['Phonenumber'] != null){
+                userModel.findPhoneNumber(call['Phonenumber'], function (err, number) {
+                    if(number[0])callback(null, messages.phone_already_use);
+                    else {
+                        userModel.insertUser(call, function (err, user) {
+                            if(err)callback(err, null);
+                            else callback(null, messages.account_created);
+                        });
+                    }
+                });
+             } else if(call['Email'] != null){
+                 userModel.findEmail(call['Email'], function (err, email) {
+                     if(email[0])callback(null, messages.email_already_use);
+                     else {
+                         userModel.insertUser(call, function (err, user) {
+                             if(err)callback(err, null);
+                             else callback(null, messages.account_created);
+                         });
+                     }
+                 });
+             }
+
+
          }
      }
   });

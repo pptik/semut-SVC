@@ -8,7 +8,15 @@
   },
   "email_already_use":{
     "success": false,
-    "message": "Email sudah digunakan"
+    "message": "Email telah digunakan, jika itu akun Anda, silahkan Login"
+  },
+  "phone_already_use":{
+    "success": false,
+    "message": "Nomor telah digunakan, jika itu akun Anda, silahkan Login"
+  },
+  "username_already_use":{
+    "success": false,
+    "message": "Username telah digunakan, jika itu akun Anda, silahkan Login"
   },
   "email_or_password_invalid":{
     "success": false,
