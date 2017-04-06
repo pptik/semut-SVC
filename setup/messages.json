@@ -10,6 +10,10 @@
     "success": false,
     "message": "Email telah digunakan, jika itu akun Anda, silahkan Login"
   },
+  "parameter_not_completed":{
+    "success": false,
+    "message": "Parameter tidak lengkap"
+  },
   "phone_already_use":{
     "success": false,
     "message": "Nomor telah digunakan, jika itu akun Anda, silahkan Login"

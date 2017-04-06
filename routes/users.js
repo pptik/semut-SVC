@@ -6,7 +6,7 @@ var userController = require('../controller/user_controller');
 
 router.post('/login', function(req, res, next) {
   console.log(req.body);
-  if(req.body['Email'] == null || req.body['Password'] == null) {
+  if(req.body['Password'] == null) {
     res.status(200).send({success: false, message: "parameter tidak lengkap"});
   }else {
     userController.login(req.body, function (err, result) {
