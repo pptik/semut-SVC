@@ -3,7 +3,6 @@ var userModel = require('../model/user_model');
 
 function updatePushID(query) {
     return new Promise(function (resolve, reject) {
-
         userModel.checkSession(query['SessionID'], function (err, userID) {
             if (err) reject(err);
             else {

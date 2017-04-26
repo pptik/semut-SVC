@@ -201,6 +201,68 @@ exports.insertUser = function (query, callback) {
 };
 
 
+
+
+exports.insertNotifierUser = function (query, callback) {
+    var email = query.Email;
+    var phonenumber = query.Phonenumber;
+    var gender = query.Gender;
+    var birthday = query.Birthday;
+    var password = query.Password;
+    var name = query.Name;
+    var username = query.Username;
+    autoIncrement.getNextSequence(db, 'tb_user', 'ID', function (err, autoIndex){
+        if(err){
+            callback(err, null);
+        }else {
+            var userQuery = {
+                "ID" : autoIndex,
+                "Name" : name,
+                "username" : username,
+                "Email" : email,
+                "CountryCode" : 62,
+                "PhoneNumber" : phonenumber,
+                "Gender" : gender,
+                "Birthday" : birthday,
+                "Password" : md5(password),
+                "Joindate" : moment().format('YYYY-MM-DD HH:mm:ss'),
+                "Poin" : 100,
+                "PoinLevel" : 100,
+                "AvatarID" : gender,
+                "facebookID" : null,
+                "Verified" : 0,
+                "VerifiedNumber" : null,
+                "Visibility" : 0,
+                "Reputation" : 0,
+                "flag" : 1,
+                "Barcode" : "",
+                "deposit" : 0,
+                "ID_role" : 5,
+                "Plat_motor" : null,
+                "ID_ktp" : null,
+                "foto" : null,
+                "PushID" : "no id",
+                "Status_online" : null,
+                "Path_foto" : null,
+                "Nama_foto" : null,
+                "Path_ktp" : null,
+                "Nama_ktp" : null
+            };
+            userCollection.insertOne(userQuery, function (err, result) {
+                if(err){
+                    console.log(err);
+                    callback(err, null);
+                }else {
+                    callback(null, result);
+                }
+            });
+        }
+    });
+};
+
+
+
+
 exports.getRelationStatus = function(id1, id2, callback) {
     relationCollection.find({ $or: [ { ID_REQUEST: parseInt(id1), ID_RESPONSE: parseInt(id2) }, { ID_REQUEST: parseInt(id2), ID_RESPONSE: parseInt(id1) } ] } ).toArray(function (err, results) {
         if (err) {
