@@ -5,8 +5,8 @@ var postCollection = db.collection('tb_post');
 var postTypeCollection = db.collection('tb_post_type');
 
 function findPostNearby(query) {
-  //  var dateNow = new Date();
-    var dateNow = '2014-05-21 09:12:46';
+    var dateNow = new Date();
+  //  var dateNow = '2014-05-21 09:12:46';
     var latitude = parseFloat(query['Latitude']);
     var longitude = parseFloat(query['Longitude']);
     return new Promise(function (resolve, reject) {
