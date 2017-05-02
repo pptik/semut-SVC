@@ -361,7 +361,7 @@ exports.searchUser = function(key, userID, callback) {
                             delete arrResult[i]['Path_ktp'];
                             delete arrResult[i]['Nama_ktp'];
                             delete arrResult[i]['facebookID'];
-                            delete arrResult[i]['ID_role'];
+                          //  delete arrResult[i]['ID_role'];
                             delete arrResult[i]['ID_ktp'];
                             delete arrResult[i]['Plat_motor'];
                             delete arrResult[i]['VerifiedNumber'];
