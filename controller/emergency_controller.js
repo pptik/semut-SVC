@@ -38,6 +38,30 @@ function insertPanicButton(query) {
     });
 }
 
+
+function getEmergencyPost(query) {
+    return new Promise(function (resolve, reject) {
+        userModel.checkCompleteSession(query['SessionID'], function (err, user) {
+            if (err) reject(err);
+            else {
+                if (user) {
+                    emergencyModel.getEmergencyPost().then(function (items) {
+                        var response = {success: true, message: "Berhasil memuat data", data:items}
+                        resolve(response);
+                    }).catch(function (err) {
+                       reject(err);
+                    });
+                } else {
+                    resolve(message.invalid_session);
+                }
+            }
+        });
+
+    });
+}
+
+
 module.exports = {
-    insertPanicButton:insertPanicButton
+    insertPanicButton:insertPanicButton,
+    getEmergencyPost:getEmergencyPost,
 };

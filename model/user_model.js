@@ -129,7 +129,7 @@ exports.getProfileById = function(iduser, callback) {
                 delete data['Path_ktp'];
                 delete data['Nama_ktp'];
                 delete data['facebookID'];
-                delete data['ID_role'];
+            //    delete data['ID_role'];
                 delete data['ID_ktp'];
                 delete data['Plat_motor'];
                 delete data['VerifiedNumber'];
