@@ -3,7 +3,6 @@ var db = app.db;
 var userCollection = db.collection('tb_user');
 
 
-
 function updatePushID(query) {
     return new Promise(function (resolve, reject) {
         userCollection.updateOne({ID: query['UserID']}, { $set: { PushID: query['DeviceToken']}}, function (err, results) {
