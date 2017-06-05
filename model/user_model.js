@@ -111,8 +111,10 @@ exports.checkCompleteSession = function(sessid, callback) {
 };
 
 exports.changeOnlineStatus = (status, userID) => {
+    console.log(status, userID);
     return new Promise((resolve, reject) => {
-        userCollection.updateOne({UserID: userID}, {$set: {Status_online: status}}, (err, items) => {
+        userCollection.updateOne({ID: userID}, {$set: {Status_online: status}}, (err, items) => {
+            console.log(items);
             if(err) reject(err);
             else resolve(items);
         });
