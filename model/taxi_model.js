@@ -1,6 +1,5 @@
 var app = require('../app');
 var db = app.db;
-
 var taxiOrderCollection = db.collection('tb_taxi_order');
 
 
