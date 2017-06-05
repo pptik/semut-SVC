@@ -162,6 +162,25 @@ exports.getProfile = function (call, callback) {
 };
 
 
+exports.updateOnlineStatus = (query) => {
+  return new Promise((resolve, reject) => {
+      userModel.checkSession(query['SessionID'], (err, userID) => {
+          if(err) reject(err);
+          else {
+              if(userID != null){
+                  userModel.changeOnlineStatus(parseInt(query['Status']), userID).then(items => {
+                      var response = {success: true, message: "berhasil update status"};
+                      resolve(response);
+                  }).catch(err => {
+                      reject(err);
+                  });
+              }else resolve(messages.invalid_session);
+          }
+      });
+  });
+};
+
+
 exports.getProfileById = function (call, callback) {
     userModel.checkSession(call['SessionID'], function (err, userID) {
        if(err) callback(err,null);

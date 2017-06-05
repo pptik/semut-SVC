@@ -110,6 +110,15 @@ exports.checkCompleteSession = function(sessid, callback) {
     });
 };
 
+exports.changeOnlineStatus = (status, userID) => {
+    return new Promise((resolve, reject) => {
+        userCollection.updateOne({UserID: userID}, {$set: {Status_online: status}}, (err, items) => {
+            if(err) reject(err);
+            else resolve(items);
+        });
+    });
+};
+
 
 exports.getProfileById = function(iduser, callback) {
     var _id = parseInt(iduser);

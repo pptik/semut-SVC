@@ -75,6 +75,18 @@ router.post('/getprofile', function(req, res, next) {
   }
 });
 
+router.post('/updatestatus', (req, res, next) => {
+   if(req.body['SessionID'] === 'undefined' || req.body['Status'] === 'undefined'){
+       res.status(200).send({success: false, message: "parameter tidak lengkap"});
+   }else {
+       userController.updateOnlineStatus(req.body).then(result => {
+           res.status(200).send(result);
+       }).catch(err => {
+          console.log(err);
+           res.status(200).send({success: false, message: "Server bermasalah"});
+       });
+   }
+});
 
 router.post('/getprofilebyid', function(req, res, next) {
   var sessid = req.body.SessionID;
