@@ -77,7 +77,7 @@ exports.getSession = function (userID, callback) {
 };
 
 exports.checkSession = function(sessid, callback) {
-    sessionCollection.find({ID: sessid}).toArray(function (err, results) {
+    sessionCollection.find({ID: sessid, "EndTime": "0000-00-00 00:00:00"}).toArray(function (err, results) {
         if (err) {
             console.log(err);
             callback(err, null);
