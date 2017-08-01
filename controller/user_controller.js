@@ -100,8 +100,39 @@ exports.signup = function (call, callback) {
   });
 };
 
+exports.signupElangApp = function (call, callback) {
+  userModel.findUserName(call['Username'], function (err, username) {
+     if(err)callback(err, null);
+      else {
+         if(username[0])callback(null, messages.username_already_use);
+         else {
+             if(call['Phonenumber'] != null){
+                userModel.findPhoneNumber(call['Phonenumber'], function (err, number) {
+                    if(number[0])callback(null, messages.phone_already_use);
+                    else {
+                        userModel.insertUserElangApp(call, function (err, user) {
+                            if(err)callback(err, null);
+                            else callback(null, messages.account_created);
+                        });
+                    }
+                });
+             } else if(call['Email'] != null){
+                 userModel.findEmail(call['Email'], function (err, email) {
+                     if(email[0])callback(null, messages.email_already_use);
+                     else {
+                         userModel.insertUserElangApp(call, function (err, user) {
+                             if(err)callback(err, null);
+                             else callback(null, messages.account_created);
+                         });
+                     }
+                 });
+             }else callback(null, messages.parameter_not_completed);
 
 
+         }
+     }
+  });
+};
 
 exports.signupNotifier = function (call, callback) {
     userModel.findUserName(call['Username'], function (err, username) {
@@ -235,3 +266,4 @@ exports.searchUser = function (call, callback) {
         }
     });
 };
+
