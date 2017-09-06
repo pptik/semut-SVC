@@ -39,6 +39,26 @@ router.post('/signup', function(req, res, next) {
   }
 });
 
+router.post('/signup-elang', function(req, res, next) {
+  console.log(req.body);
+  var username = req.body.Username;
+  var gender = req.body.Gender;
+  var birthday = req.body.Birthday;
+  var password = req.body.Password;
+  var name = req.body.Name;
+  if(username == null || gender == null || birthday == null || password == null || name == null) {
+    res.status(200).send({success: false, message: "parameter tidak lengkap"});
+  }else {
+    userController.signupElangApp(req.body, function (err, result) {
+      if(err){
+        res.status(200).send({success: false, message: "Server bermasalah"});
+      }else {
+        res.status(200).send(result);
+      }
+    });
+  }
+});
+
 router.post('/signup-notifier', function(req, res, next) {
     console.log(req.body);
     var username = req.body.Username;

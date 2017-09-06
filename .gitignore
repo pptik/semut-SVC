@@ -105,3 +105,4 @@ jspm_packages
 
 
 # End of https://www.gitignore.io/api/intellij,node
+configs.json

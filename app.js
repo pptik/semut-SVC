@@ -106,8 +106,10 @@ database.connect(function (err, db) {
         var emergency = require('./routes/emergency');
         var cctv = require('./routes/cctv');
         var notification = require('./routes/notification');
+        var users_elang = require('./routes/users_elang')
         app.use('/', index);
         app.use('/api/users', users);
+        app.use('/api/users_elang', users_elang);
         app.use('/api/tracker', tracker);
         app.use('/api/friend', friend);
         app.use('/api/location', location);

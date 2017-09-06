@@ -157,11 +157,12 @@ exports.getProfileById = function(iduser, callback) {
 exports.insertUser = function (query, callback) {
     var email = query.Email;
     var phonenumber = query.Phonenumber;
-    var gender = query.Gender;
-    var birthday = query.Birthday;
+    var jabatan = query.Jabatan;
+    var satuan = query.Satuan;
     var password = query.Password;
     var name = query.Name;
     var username = query.Username;
+    var idRole = query.Idrole;
     autoIncrement.getNextSequence(db, 'tb_user', 'ID', function (err, autoIndex){
         if(err){
             callback(err, null);
@@ -173,13 +174,13 @@ exports.insertUser = function (query, callback) {
                 "Email" : email,
                 "CountryCode" : 62,
                 "PhoneNumber" : phonenumber,
-                "Gender" : gender,
-                "Birthday" : birthday,
+                "Gender" : null,
+                "Birthday" : null,
                 "Password" : md5(password),
                 "Joindate" : moment().format('YYYY-MM-DD HH:mm:ss'),
                 "Poin" : 100,
                 "PoinLevel" : 100,
-                "AvatarID" : gender,
+                "AvatarID" : 0,
                 "facebookID" : null,
                 "Verified" : 0,
                 "VerifiedNumber" : null,
@@ -188,7 +189,7 @@ exports.insertUser = function (query, callback) {
                 "flag" : 1,
                 "Barcode" : "",
                 "deposit" : 0,
-                "ID_role" : null,
+                "ID_role" : idRole,
                 "Plat_motor" : null,
                 "ID_ktp" : null,
                 "foto" : null,
@@ -197,7 +198,9 @@ exports.insertUser = function (query, callback) {
                 "Path_foto" : null,
                 "Nama_foto" : null,
                 "Path_ktp" : null,
-                "Nama_ktp" : null
+                "Nama_ktp" : null,
+                "Jabatan" : jabatan,
+                "Satuan": satuan
             };
             userCollection.insertOne(userQuery, function (err, result) {
                 if(err){
