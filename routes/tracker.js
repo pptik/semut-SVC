@@ -4,7 +4,11 @@ var trackerController = require('../controller/tracker_controller');
 
 router.post('/register', function(req, res, next) {
     console.log(req.body);
-    if(req.body['Mac'] == null || req.body['Keterangan'] == null || req.body['SessionID'] == null || req.body['Type'] == null){
+    if(req.body['Mac'] == null
+        || req.body['Keterangan'] == null
+        || req.body['SessionID'] == null
+        || req.body['Type'] == null
+        || req.body['AppID'] == null){
         res.status(200).send({success: false, message: "Parameter tidak lengkap"});
     }else {
         var request = {
@@ -12,6 +16,7 @@ router.post('/register', function(req, res, next) {
             Mac: req.body['Mac'],
             Speed : 0,
             Date : "",
+            AppID: parseInt(req.body['AppID']),
             Time : "",
             Data: [0,0],
             Lokasi: "",
